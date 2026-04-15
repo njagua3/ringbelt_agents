@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #002349;
+  --color-brand-gold: #C5A059;
+  --color-brand-gold-light: #E5C38B;
+  --color-brand-navy: #000a14;
+  
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-white text-slate-900 transition-colors duration-500 dark:bg-brand-navy dark:text-slate-100 font-sans;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
+  }
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold bg-clip-text text-transparent;
+  }
+  .bg-mesh {
+    background-image: radial-gradient(at 0% 0%, rgba(197, 160, 89, 0.15) 0, transparent 50%), 
+                      radial-gradient(at 100% 100%, rgba(0, 35, 73, 0.2) 0, transparent 50%);
+  }
+}

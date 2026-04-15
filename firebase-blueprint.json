@@ -1,0 +1,26 @@
+{
+  "entities": {
+    "Property": {
+      "title": "Property",
+      "description": "A real estate property listing",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Title of the property" },
+        "location": { "type": "string", "description": "Location in Nyeri" },
+        "price": { "type": "string", "description": "Price in Ksh" },
+        "image": { "type": "string", "description": "URL of the property image" },
+        "category": { "type": "string", "description": "Property category" },
+        "available": { "type": "boolean", "description": "Availability status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["title", "location", "price", "image", "category", "available"]
+    }
+  },
+  "firestore": {
+    "/properties/{propertyId}": {
+      "schema": { "$ref": "Property" },
+      "description": "Collection of property listings"
+    }
+  }
+}
