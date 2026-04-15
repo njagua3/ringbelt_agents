@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -39,6 +39,93 @@ interface Property {
   size?: string;
 }
 
+const optimizeImage = (url: string, width: number = 500) => {
+  if (url.includes('unsplash.com')) {
+    return `${url.split('?')[0]}?auto=format&fit=crop&q=50&w=${width}`;
+  }
+  return url;
+};
+
+const PropertyCard = memo(({ prop }: { prop: Property }) => (
+  <motion.div
+    layout
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.5 }}
+    className="group"
+  >
+    <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden mb-12 shadow-3xl">
+      <img
+        src={optimizeImage(prop.image, 500)}
+        alt={prop.title}
+        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s]"
+        referrerPolicy="no-referrer"
+        loading="lazy"
+        decoding="async"
+      />
+      
+      {/* Status Badges */}
+      <div className="absolute top-10 left-10 flex flex-col gap-3">
+        <span className="bg-white/90 dark:bg-brand-navy/90 backdrop-blur-md text-brand-blue dark:text-white px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl">
+          {prop.category}
+        </span>
+        {(prop.featured || prop.id.startsWith('feat-')) && (
+          <span className="bg-brand-gold text-brand-blue px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2">
+            <Sparkles size={12} /> Featured
+          </span>
+        )}
+      </div>
+
+      {/* Price & Availability */}
+      <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end">
+        <div className="bg-brand-blue/40 dark:bg-black/40 backdrop-blur-2xl border border-white/20 px-8 py-5 rounded-3xl">
+          <span className="text-white text-3xl font-serif font-bold">{prop.price}</span>
+          <span className="text-white/60 text-[10px] block uppercase tracking-widest mt-1">Monthly Valuation</span>
+        </div>
+        
+        {!prop.available && (
+          <div className="bg-red-500/20 backdrop-blur-xl border border-red-500/40 px-6 py-3 rounded-2xl">
+            <span className="text-red-500 text-[10px] font-bold uppercase tracking-widest">Occupied</span>
+          </div>
+        )}
+      </div>
+
+      {/* Hover Overlay */}
+      <div className="absolute inset-0 bg-brand-blue/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-sm">
+        <button className="bg-white text-brand-blue px-12 py-5 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-2xl translate-y-8 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-3">
+          View Full Asset <ArrowRight size={16} />
+        </button>
+      </div>
+    </div>
+
+    <div className="px-6">
+      <div className="flex items-center gap-3 text-brand-gold mb-6">
+        <MapPin size={16} />
+        <span className="text-[11px] font-bold uppercase tracking-[0.4em]">{prop.location}</span>
+      </div>
+      <h3 className="font-serif text-4xl md:text-5xl font-bold text-brand-blue dark:text-white mb-10 group-hover:text-brand-gold transition-colors duration-500 leading-tight">
+        {prop.title}
+      </h3>
+      
+      <div className="flex items-center gap-12 text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-white/5 pt-10">
+        <div className="flex items-center gap-3 group/icon">
+          <Bed size={20} className="text-brand-gold/60 group-hover/icon:text-brand-gold transition-colors" />
+          <span className="text-[10px] font-bold uppercase tracking-widest">{prop.beds || 0} Beds</span>
+        </div>
+        <div className="flex items-center gap-3 group/icon">
+          <Bath size={20} className="text-brand-gold/60 group-hover/icon:text-brand-gold transition-colors" />
+          <span className="text-[10px] font-bold uppercase tracking-widest">{prop.baths || 0} Baths</span>
+        </div>
+        <div className="flex items-center gap-3 group/icon">
+          <Maximize size={20} className="text-brand-gold/60 group-hover/icon:text-brand-gold transition-colors" />
+          <span className="text-[10px] font-bold uppercase tracking-widest">{prop.size || 'N/A'}</span>
+        </div>
+      </div>
+    </div>
+  </motion.div>
+));
+
 export default function Properties() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,13 +159,6 @@ export default function Properties() {
   const displayProperties = filteredProperties.slice(0, displayLimit);
   const hasMore = filteredProperties.length > displayLimit;
 
-  const optimizeImage = (url: string) => {
-    if (url.includes('unsplash.com')) {
-      return `${url.split('?')[0]}?auto=format&fit=crop&q=60&w=800`;
-    }
-    return url;
-  };
-
   return (
     <div className="pt-20 pb-32 dark:bg-brand-navy min-h-screen transition-colors duration-500">
       {/* Editorial Hero */}
@@ -88,7 +168,7 @@ export default function Properties() {
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
             transition={{ duration: 2 }}
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1920"
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=70&w=1600"
             alt="Luxury Estate"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
@@ -131,11 +211,17 @@ export default function Properties() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: i * 0.05 }}
               onClick={() => setActiveCategory(item.category)}
               className="group relative h-80 rounded-[2.5rem] overflow-hidden cursor-pointer shadow-2xl"
             >
-              <img src={item.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.name} />
+              <img 
+                src={optimizeImage(item.image, 400)} 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                alt={item.name}
+                loading="lazy"
+                decoding="async"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-blue via-brand-blue/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
               <div className="absolute inset-0 p-8 flex flex-col justify-end">
                 <div className="w-12 h-12 bg-brand-gold/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 group-hover:bg-brand-gold group-hover:text-brand-blue transition-all">
@@ -209,82 +295,8 @@ export default function Properties() {
               layout
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-32"
             >
-              {displayProperties.map((prop, index) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: (index % 3) * 0.1 }}
-                  key={prop.id}
-                  className="group"
-                >
-                  <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden mb-12 shadow-3xl">
-                    <img
-                      src={optimizeImage(prop.image)}
-                      alt={prop.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s]"
-                      referrerPolicy="no-referrer"
-                    />
-                    
-                    {/* Status Badges */}
-                    <div className="absolute top-10 left-10 flex flex-col gap-3">
-                      <span className="bg-white/90 dark:bg-brand-navy/90 backdrop-blur-md text-brand-blue dark:text-white px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl">
-                        {prop.category}
-                      </span>
-                      {(prop.featured || prop.id.startsWith('feat-')) && (
-                        <span className="bg-brand-gold text-brand-blue px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2">
-                          <Sparkles size={12} /> Featured
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Price & Availability */}
-                    <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end">
-                      <div className="bg-brand-blue/40 dark:bg-black/40 backdrop-blur-2xl border border-white/20 px-8 py-5 rounded-3xl">
-                        <span className="text-white text-3xl font-serif font-bold">{prop.price}</span>
-                        <span className="text-white/60 text-[10px] block uppercase tracking-widest mt-1">Monthly Valuation</span>
-                      </div>
-                      
-                      {!prop.available && (
-                        <div className="bg-red-500/20 backdrop-blur-xl border border-red-500/40 px-6 py-3 rounded-2xl">
-                          <span className="text-red-500 text-[10px] font-bold uppercase tracking-widest">Occupied</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-brand-blue/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-sm">
-                      <button className="bg-white text-brand-blue px-12 py-5 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-2xl translate-y-8 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-3">
-                        View Full Asset <ArrowRight size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="px-6">
-                    <div className="flex items-center gap-3 text-brand-gold mb-6">
-                      <MapPin size={16} />
-                      <span className="text-[11px] font-bold uppercase tracking-[0.4em]">{prop.location}</span>
-                    </div>
-                    <h3 className="font-serif text-4xl md:text-5xl font-bold text-brand-blue dark:text-white mb-10 group-hover:text-brand-gold transition-colors duration-500 leading-tight">
-                      {prop.title}
-                    </h3>
-                    
-                    <div className="flex items-center gap-12 text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-white/5 pt-10">
-                      <div className="flex items-center gap-3 group/icon">
-                        <Bed size={20} className="text-brand-gold/60 group-hover/icon:text-brand-gold transition-colors" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">{prop.beds || 0} Beds</span>
-                      </div>
-                      <div className="flex items-center gap-3 group/icon">
-                        <Bath size={20} className="text-brand-gold/60 group-hover/icon:text-brand-gold transition-colors" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">{prop.baths || 0} Baths</span>
-                      </div>
-                      <div className="flex items-center gap-3 group/icon">
-                        <Maximize size={20} className="text-brand-gold/60 group-hover/icon:text-brand-gold transition-colors" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">{prop.size || 'N/A'}</span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+              {displayProperties.map((prop) => (
+                <PropertyCard key={prop.id} prop={prop} />
               ))}
             </motion.div>
           ) : (
