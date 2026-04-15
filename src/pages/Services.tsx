@@ -22,14 +22,14 @@ const services = [
     description: 'Finding the right tenant is crucial. We market your property across multiple platforms to find reliable tenants quickly.',
     icon: Key,
     benefits: ['Wide Marketing Reach', 'Lease Agreement Drafting', 'Move-in Inspections', 'Deposit Management'],
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=800'
   },
   {
     title: 'Asset Advisory',
     description: 'Strategic consulting for real estate investments. We help you identify high-yield opportunities in the Nyeri market.',
     icon: ShieldCheck,
     benefits: ['Investment Analysis', 'Portfolio Growth', 'Risk Assessment', 'Market Insights'],
-    image: 'https://images.unsplash.com/photo-1460472178825-e5240623abe5?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800'
   },
 ];
 

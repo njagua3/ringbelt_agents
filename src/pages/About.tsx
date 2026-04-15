@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Target, Eye, CheckCircle2, Award, Shield, Zap } from 'lucide-react';
+import { Target, Eye, CheckCircle2, Award, Shield, Zap, MapPin, ShieldCheck, TrendingUp } from 'lucide-react';
 
 export default function About() {
   return (
@@ -28,11 +28,11 @@ export default function About() {
                   Our Legacy
                 </span>
                 <h1 className="font-serif text-6xl md:text-8xl font-bold text-brand-blue dark:text-white mb-10 leading-[0.9] tracking-tighter">
-                  Defining <br />
-                  <span className="text-gradient-gold italic">The Gold Standard</span>
+                  Excellence <br />
+                  <span className="text-gradient-gold italic">In Every Detail</span>
                 </h1>
                 <p className="text-slate-600 dark:text-slate-400 text-xl leading-relaxed mb-12 font-light">
-                  Ringbelt Real Estate Agents was established to bridge the gap between luxury property management and local market expertise in Nyeri. We don't just manage buildings; we curate lifestyles and protect investments.
+                  Ringbelt Real Estate Agents was established to redefine the property landscape in Nyeri. We don't just manage buildings; we curate lifestyles, protect multi-generational investments, and provide a sanctuary for those who value the finer things in life.
                 </p>
                 <div className="grid grid-cols-2 gap-12 border-t border-slate-100 dark:border-white/5 pt-12">
                   <div>
@@ -63,6 +63,92 @@ export default function About() {
               </motion.div>
               <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-brand-gold/20 rounded-full blur-3xl" />
               <div className="absolute -top-12 -left-12 w-64 h-64 bg-brand-blue/10 rounded-full blur-3xl" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us - Enhanced */}
+      <section className="py-32 bg-slate-50 dark:bg-black/20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-24">
+            <span className="text-brand-gold font-bold text-xs uppercase tracking-[0.3em] mb-6 block">The Ringbelt Advantage</span>
+            <h2 className="font-serif text-5xl md:text-7xl font-bold text-brand-blue dark:text-white mb-8">Why Discerning Clients <br /> Choose Us</h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {[
+              {
+                title: 'Unmatched Local Intelligence',
+                desc: 'We possess a granular understanding of Nyeri\'s neighborhoods, from the quiet suburbs of Mweiga to the bustling CBD. This data-driven insight ensures your assets are always positioned for maximum yield.',
+                icon: MapPin
+              },
+              {
+                title: 'High-Touch Management',
+                desc: 'Our management style is proactive, not reactive. We anticipate maintenance needs and tenant concerns before they become issues, preserving the long-term value of your property.',
+                icon: ShieldCheck
+              },
+              {
+                title: 'Elite Marketing Network',
+                desc: 'Your property isn\'t just listed; it\'s showcased. We leverage a high-net-worth network and premium digital marketing to find the right tenants and buyers faster than anyone else.',
+                icon: TrendingUp
+              }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-12 bg-white dark:bg-white/5 rounded-[3rem] shadow-xl border border-slate-100 dark:border-white/5 group hover:bg-brand-blue transition-all duration-500"
+              >
+                <div className="w-20 h-20 bg-brand-gold/10 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-brand-gold transition-colors">
+                  <item.icon className="text-brand-gold w-10 h-10 group-hover:text-brand-blue transition-colors" />
+                </div>
+                <h3 className="font-serif text-3xl font-bold text-brand-blue dark:text-white mb-6 group-hover:text-white transition-colors">{item.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed group-hover:text-white/80 transition-colors">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Our Process */}
+      <section className="py-32 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-20">
+            <div className="lg:w-1/2">
+              <span className="text-brand-gold font-bold text-xs uppercase tracking-[0.3em] mb-6 block">Our Methodology</span>
+              <h2 className="font-serif text-5xl md:text-7xl font-bold text-brand-blue dark:text-white mb-12">A Seamless Path to <br /> <span className="italic font-normal text-brand-gold">Asset Growth</span></h2>
+              
+              <div className="space-y-12">
+                {[
+                  { step: '01', title: 'Consultation', desc: 'We begin by understanding your specific goals, whether it\'s passive income or capital appreciation.' },
+                  { step: '02', title: 'Strategy', desc: 'We develop a bespoke management or sales plan tailored to your property\'s unique profile.' },
+                  { step: '03', title: 'Execution', desc: 'Our team handles every detail with precision, from marketing to legal compliance.' },
+                  { step: '04', title: 'Optimization', desc: 'Continuous monitoring and reporting to ensure your investment is performing at its peak.' },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-8 group">
+                    <span className="font-serif text-4xl font-bold text-brand-gold/30 group-hover:text-brand-gold transition-colors">{item.step}</span>
+                    <div>
+                      <h4 className="text-2xl font-bold text-brand-blue dark:text-white mb-2">{item.title}</h4>
+                      <p className="text-slate-600 dark:text-slate-400 font-light">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="lg:w-1/2 relative">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-6 pt-12">
+                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600" className="rounded-[3rem] shadow-2xl" alt="Office" />
+                  <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=600" className="rounded-[3rem] shadow-2xl" alt="Property" />
+                </div>
+                <div className="space-y-6">
+                  <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=600" className="rounded-[3rem] shadow-2xl" alt="Building" />
+                  <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=600" className="rounded-[3rem] shadow-2xl" alt="Meeting" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
