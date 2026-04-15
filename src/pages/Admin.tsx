@@ -21,6 +21,7 @@ interface Property {
   image: string;
   category: string;
   available: boolean;
+  featured?: boolean;
   beds?: number;
   baths?: number;
   size?: string;
@@ -43,6 +44,7 @@ export default function Admin() {
     image: '',
     category: categories[0],
     available: true,
+    featured: false,
     beds: 0,
     baths: 0,
     size: '',
@@ -102,6 +104,7 @@ export default function Admin() {
         image: '',
         category: categories[0],
         available: true,
+        featured: false,
         beds: 0,
         baths: 0,
         size: '',
@@ -123,6 +126,7 @@ export default function Admin() {
       image: prop.image,
       category: prop.category,
       available: prop.available,
+      featured: prop.featured || false,
       beds: prop.beds || 0,
       baths: prop.baths || 0,
       size: prop.size || '',
@@ -157,7 +161,8 @@ export default function Admin() {
   const filteredAdminProperties = properties.filter(prop => {
     const matchesSearch = prop.title.toLowerCase().includes(adminSearch.toLowerCase()) || 
                           prop.location.toLowerCase().includes(adminSearch.toLowerCase());
-    const matchesCategory = adminCategory === 'All' || prop.category === adminCategory;
+    const matchesCategory = adminCategory === 'All' || 
+                           (adminCategory === 'Featured' ? prop.featured : prop.category === adminCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -182,6 +187,7 @@ export default function Admin() {
       for (const prop of newProperties) {
         await addDoc(collection(db, 'properties'), {
           ...prop,
+          featured: (prop as any).featured || false,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
@@ -339,7 +345,12 @@ export default function Admin() {
                             />
                           </div>
                           <div>
-                            <div className="font-bold text-brand-blue dark:text-white text-lg group-hover:text-brand-gold transition-colors">{prop.title}</div>
+                            <div className="font-bold text-brand-blue dark:text-white text-lg group-hover:text-brand-gold transition-colors flex items-center gap-3">
+                              {prop.title}
+                              {prop.featured && (
+                                <span className="px-2 py-0.5 bg-brand-gold text-brand-blue text-[8px] font-bold uppercase tracking-widest rounded-md">Featured</span>
+                              )}
+                            </div>
                             <div className="text-xs text-slate-700 dark:text-slate-200 font-light">{prop.location}</div>
                           </div>
                         </div>
@@ -551,22 +562,42 @@ export default function Admin() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5">
-                      <div 
-                        onClick={() => setFormData({...formData, available: !formData.available})}
-                        className={cn(
-                          "w-12 h-6 rounded-full relative cursor-pointer transition-all duration-300",
-                          formData.available ? "bg-green-500" : "bg-slate-300 dark:bg-slate-700"
-                        )}
-                      >
-                        <div className={cn(
-                          "absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300",
-                          formData.available ? "left-7" : "left-1"
-                        )} />
+                    <div className="flex flex-col gap-6 p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5">
+                      <div className="flex items-center gap-4">
+                        <div 
+                          onClick={() => setFormData({...formData, available: !formData.available})}
+                          className={cn(
+                            "w-12 h-6 rounded-full relative cursor-pointer transition-all duration-300",
+                            formData.available ? "bg-green-500" : "bg-slate-300 dark:bg-slate-700"
+                          )}
+                        >
+                          <div className={cn(
+                            "absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300",
+                            formData.available ? "left-7" : "left-1"
+                          )} />
+                        </div>
+                        <label className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest cursor-pointer">
+                          Asset is currently Available
+                        </label>
                       </div>
-                      <label className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest cursor-pointer">
-                        Asset is currently Available
-                      </label>
+
+                      <div className="flex items-center gap-4 border-t border-slate-200 dark:border-white/10 pt-4">
+                        <div 
+                          onClick={() => setFormData({...formData, featured: !formData.featured})}
+                          className={cn(
+                            "w-12 h-6 rounded-full relative cursor-pointer transition-all duration-300",
+                            formData.featured ? "bg-brand-gold" : "bg-slate-300 dark:bg-slate-700"
+                          )}
+                        >
+                          <div className={cn(
+                            "absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300",
+                            formData.featured ? "left-7" : "left-1"
+                          )} />
+                        </div>
+                        <label className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest cursor-pointer">
+                          Mark as Featured Collection
+                        </label>
+                      </div>
                     </div>
 
                     <div className="flex gap-6 pt-4">

@@ -1,5 +1,5 @@
 export const categories = [
-  '1 Bedroom', '2 Bedroom', 'Bedsitters', 'Single Rooms', 
+  'Featured', '1 Bedroom', '2 Bedroom', 'Bedsitters', 'Single Rooms', 
   'Student Hostels', 'Business Shops', 'Commercial Spaces', 'Premium Properties'
 ];
 
@@ -11,6 +11,7 @@ export const sampleProperties = [
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800',
     category: 'Premium Properties',
     available: true,
+    featured: true,
     beds: 3,
     baths: 2,
     size: '1,200 sqft'
@@ -22,6 +23,7 @@ export const sampleProperties = [
     image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800',
     category: 'Premium Properties',
     available: true,
+    featured: true,
     beds: 4,
     baths: 3,
     size: '2,500 sqft'
