@@ -3,6 +3,7 @@ import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize } from 'lucide-r
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { db, collection, onSnapshot, query, orderBy } from '@/lib/firebase';
+import { sampleProperties } from '@/constants/initialData';
 
 const categories = [
   'All',
@@ -32,9 +33,13 @@ interface Property {
 export default function Properties() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [properties, setProperties] = useState<Property[]>([]);
+  
+  // Initialize with sample data for instant load (Marketing Gimmick)
+  const [properties, setProperties] = useState<Property[]>(
+    sampleProperties.map((p, i) => ({ id: `initial-${i}`, ...p }))
+  );
   const [loading, setLoading] = useState(true);
-  const [displayLimit, setDisplayLimit] = useState(6);
+  const [displayLimit, setDisplayLimit] = useState(24); // Show all 24 by default for speed
 
   useEffect(() => {
     const q = query(
@@ -67,10 +72,11 @@ export default function Properties() {
   const displayProperties = filteredProperties.slice(0, displayLimit);
   const hasMore = filteredProperties.length > displayLimit;
 
-  // Helper to optimize Unsplash URLs
+  // Helper to optimize Unsplash URLs - Aggressive for speed
   const optimizeImage = (url: string) => {
     if (url.includes('unsplash.com')) {
-      return `${url.split('?')[0]}?auto=format&fit=crop&q=60&w=600`;
+      // Lower quality (q=45) and smaller width (w=500) for faster loading
+      return `${url.split('?')[0]}?auto=format&fit=crop&q=45&w=500`;
     }
     return url;
   };
@@ -168,7 +174,7 @@ export default function Properties() {
           </div>
         ) : displayProperties.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {displayProperties.map((prop) => (
+            {displayProperties.map((prop, index) => (
               <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -183,7 +189,7 @@ export default function Properties() {
                     alt={prop.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     referrerPolicy="no-referrer"
-                    loading="lazy"
+                    loading={index < 3 ? "eager" : "lazy"}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-blue/80 via-transparent to-transparent opacity-60" />
                   

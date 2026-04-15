@@ -8,14 +8,14 @@ const services = [
     description: 'We handle everything from tenant screening to rent collection and maintenance. Our goal is to make property ownership stress-free for landlords.',
     icon: Building2,
     benefits: ['Tenant Screening', 'Rent Collection', 'Maintenance & Repairs', 'Financial Reporting'],
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=800'
   },
   {
     title: 'Real Estate Sales',
     description: 'Looking to buy or sell? Our expert agents provide market analysis and strategic marketing to ensure you get the best value for your property.',
     icon: TrendingUp,
     benefits: ['Market Valuation', 'Professional Photography', 'Strategic Marketing', 'Legal Assistance'],
-    image: 'https://images.unsplash.com/photo-1582408921715-18e7806365c1?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800'
   },
   {
     title: 'Rental Agency',
