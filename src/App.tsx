@@ -16,6 +16,7 @@ import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
 import WhatsAppButton from './components/WhatsAppButton';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
             </main>
             <Footer />
             <WhatsAppButton />
+            <ScrollToTop />
           </div>
         </Router>
       </ToastProvider>
