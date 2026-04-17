@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, Building2 } from 'lucide-react';
+import { Facebook, Music, Twitter, Mail, Phone, MapPin, Building2 } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const socialLinks = [
+    { Icon: Facebook, href: '#', label: 'Facebook' },
+    { Icon: Music, href: '#', label: 'TikTok' },
+    { Icon: Twitter, href: '#', label: 'Twitter' },
+  ];
 
   return (
     <footer className="bg-brand-blue dark:bg-brand-navy text-white pt-24 pb-12 relative overflow-hidden">
@@ -23,8 +29,13 @@ export default function Footer() {
             "Honesty, integrity and Professionalism are our pillars"
           </p>
           <div className="flex gap-6">
-            {[Facebook, Instagram, Twitter].map((Icon, i) => (
-              <a key={i} href="#" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-brand-gold hover:text-brand-blue transition-all duration-300 group">
+            {socialLinks.map(({ Icon, href, label }, i) => (
+              <a 
+                key={i} 
+                href={href} 
+                aria-label={label}
+                className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-brand-gold hover:text-brand-blue transition-all duration-300 group"
+              >
                 <Icon size={20} className="group-hover:scale-110 transition-transform" />
               </a>
             ))}
