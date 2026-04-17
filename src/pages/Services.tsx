@@ -29,7 +29,7 @@ const services = [
     description: 'Strategic consulting for real estate investments. We help you identify high-yield opportunities in the Central Kenya market.',
     icon: ShieldCheck,
     benefits: ['Investment Analysis', 'Portfolio Growth', 'Risk Assessment', 'Market Insights'],
-    image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800'
   },
 ];
 

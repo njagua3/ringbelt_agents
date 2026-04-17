@@ -11,8 +11,9 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       className={cn(
         "p-2 rounded-full transition-all duration-300 active:scale-90 border",
-        "bg-white/10 text-white border-white/20 hover:bg-white/20",
-        "dark:bg-brand-gold/10 dark:text-brand-gold dark:border-brand-gold/20 dark:hover:bg-brand-gold/20"
+        "bg-white/10 border-white/20 hover:bg-white/20",
+        "dark:bg-brand-gold/10 dark:border-brand-gold/20 dark:hover:bg-brand-gold/20",
+        "text-inherit"
       )}
       aria-label="Toggle theme"
     >

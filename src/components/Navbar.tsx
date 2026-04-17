@@ -30,6 +30,11 @@ export default function Navbar() {
     setIsOpen(false);
   }, [location]);
 
+  const isAboutPage = location.pathname === '/about';
+  const isLoginPage = location.pathname === '/login';
+  const isAdminPage = location.pathname === '/admin';
+  const needsDarkText = (isAboutPage || isLoginPage || isAdminPage) && !scrolled;
+
   return (
     <nav
       className={cn(
@@ -47,13 +52,13 @@ export default function Navbar() {
           <div className="flex flex-col">
             <span className={cn(
               "font-serif font-bold text-xl md:text-2xl leading-none tracking-tighter transition-colors duration-500",
-              scrolled ? "text-brand-blue dark:text-white" : "text-white"
+              scrolled || needsDarkText ? "text-brand-blue dark:text-white" : "text-white"
             )}>
               Ringbelt
             </span>
             <span className={cn(
               "text-[8px] md:text-[9px] uppercase tracking-[0.4em] font-bold transition-colors duration-500",
-              scrolled ? "text-brand-red" : "text-white/80"
+              scrolled || needsDarkText ? "text-brand-red" : "text-white/80"
             )}>
               Agents Limited
             </span>
@@ -70,14 +75,19 @@ export default function Navbar() {
                 'text-[10px] lg:text-[11px] uppercase tracking-[0.2em] font-bold transition-all duration-300 hover:text-brand-gold relative py-2',
                 location.pathname === link.href 
                   ? 'text-brand-gold' 
-                  : (scrolled ? 'text-brand-blue/60 dark:text-white/60' : 'text-white/70'),
+                  : (scrolled || needsDarkText ? 'text-brand-blue/60 dark:text-white/60' : 'text-white/70'),
                 location.pathname === link.href && "after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-brand-gold"
               )}
             >
               {link.name}
             </Link>
           ))}
-          <div className="flex items-center gap-4 lg:gap-6 border-l border-white/10 pl-4 lg:pl-6">
+          <div className={cn(
+            "flex items-center gap-4 lg:gap-6 border-l pl-4 lg:pl-6 transition-colors",
+            scrolled || needsDarkText 
+              ? "border-brand-blue/10 dark:border-white/10 text-brand-blue dark:text-brand-gold" 
+              : "border-white/10 text-white"
+          )}>
             <ThemeToggle />
             <Link
               to="/login"
@@ -89,13 +99,16 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className={cn(
+          "flex items-center gap-2 md:hidden transition-colors",
+          scrolled || needsDarkText ? "text-brand-blue dark:text-brand-gold" : "text-white"
+        )}>
           <ThemeToggle />
           <button
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
               "p-2 rounded-lg transition-colors",
-              scrolled ? "text-brand-blue dark:text-white hover:bg-brand-blue/5 dark:hover:bg-white/5" : "text-white hover:bg-white/10"
+              scrolled || needsDarkText ? "text-brand-blue dark:text-white hover:bg-brand-blue/5 dark:hover:bg-white/5" : "text-white hover:bg-white/10"
             )}
           >
             {isOpen ? <X /> : <Menu />}

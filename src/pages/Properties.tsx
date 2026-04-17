@@ -1,8 +1,8 @@
 import { useState, useEffect, memo } from 'react';
-import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase } from 'lucide-react';
+import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { db, collection, onSnapshot, query, orderBy } from '@/lib/firebase';
+import { db, collection, onSnapshot, query, orderBy, limit } from '@/lib/firebase';
 import { sampleProperties } from '@/constants/initialData';
 
 const categories = [
@@ -22,7 +22,7 @@ const assetClasses = [
   { name: 'Premium Estates', icon: Sparkles, count: 'Exclusive', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800', category: 'Premium Properties' },
   { name: 'Urban Residential', icon: Home, count: 'High Demand', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=800', category: '2 Bedroom' },
   { name: 'Commercial Hubs', icon: Briefcase, count: 'Prime Yield', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800', category: 'Commercial Spaces' },
-  { name: 'Student Living', icon: GraduationCap, count: 'Strategic', image: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?auto=format&fit=crop&q=80&w=800', category: 'Student Hostels' },
+  { name: 'Student Living', icon: GraduationCap, count: 'Strategic', image: 'https://images.unsplash.com/photo-1555854816-809d28af903d?auto=format&fit=crop&q=80&w=800', category: 'Student Hostels' },
 ];
 
 interface Property {
@@ -39,9 +39,9 @@ interface Property {
   size?: string;
 }
 
-const optimizeImage = (url: string, width: number = 500) => {
+const optimizeImage = (url: string, width: number = 400) => {
   if (url.includes('unsplash.com')) {
-    return `${url.split('?')[0]}?auto=format&fit=crop&q=50&w=${width}`;
+    return `${url.split('?')[0]}?auto=format&fit=crop&q=40&w=${width}`;
   }
   return url;
 };
@@ -136,10 +136,12 @@ export default function Properties() {
   const [displayLimit, setDisplayLimit] = useState(12);
 
   useEffect(() => {
-    const q = query(collection(db, 'properties'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'properties'), orderBy('createdAt', 'desc'), limit(50));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const dbProps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Property[];
-      if (dbProps.length > 0) setProperties(dbProps);
+      if (dbProps.length > 0) {
+        setProperties(dbProps);
+      }
       setLoading(false);
     }, (error) => {
       console.error("Error fetching properties:", error);
@@ -162,7 +164,7 @@ export default function Properties() {
   return (
     <div className="pt-20 pb-32 dark:bg-brand-navy min-h-screen transition-colors duration-500">
       {/* Editorial Hero */}
-      <section className="relative h-[80vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[100vh] lg:min-h-[110vh] flex items-start pt-48 pb-64 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <motion.img
             initial={{ scale: 1.1 }}
@@ -203,8 +205,8 @@ export default function Properties() {
       </section>
 
       {/* Asset Class Explorer */}
-      <section className="max-w-7xl mx-auto px-6 -mt-24 relative z-30 mb-32">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="max-w-7xl mx-auto px-6 -mt-32 md:-mt-48 relative z-30 mb-32">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {assetClasses.map((item, i) => (
             <motion.div
               key={i}
@@ -277,44 +279,50 @@ export default function Properties() {
         </div>
 
         {/* Property Grid */}
-        <AnimatePresence mode="wait">
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="space-y-8 animate-pulse">
-                  <div className="aspect-[4/5] bg-slate-100 dark:bg-white/5 rounded-[3.5rem]" />
-                  <div className="space-y-4">
-                    <div className="h-4 bg-slate-100 dark:bg-white/5 w-1/4 rounded" />
-                    <div className="h-10 bg-slate-100 dark:bg-white/5 w-3/4 rounded" />
-                  </div>
-                </div>
-              ))}
+        <div className="relative min-h-[400px]">
+          {loading && properties.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 animate-pulse">
+              <Loader2 className="w-12 h-12 text-brand-gold animate-spin mb-4" />
+              <p className="text-slate-400 font-light tracking-widest text-xs uppercase">Syncing Live Portfolio...</p>
             </div>
-          ) : displayProperties.length > 0 ? (
-            <motion.div 
-              layout
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-32"
-            >
-              {displayProperties.map((prop) => (
-                <PropertyCard key={prop.id} prop={prop} />
-              ))}
-            </motion.div>
           ) : (
-            <div className="text-center py-40">
-              <div className="w-24 h-24 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-10">
-                <Search className="text-slate-300" size={40} />
-              </div>
-              <h3 className="text-3xl font-serif font-bold text-brand-blue dark:text-white mb-4">No assets match your criteria</h3>
-              <p className="text-slate-500 font-light text-lg mb-10">Try broadening your search or exploring different categories.</p>
-              <button
-                onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
-                className="text-brand-gold font-bold uppercase tracking-widest text-xs border-b-2 border-brand-gold pb-2 hover:opacity-70 transition-opacity"
-              >
-                Reset All Filters
-              </button>
-            </div>
+            <AnimatePresence mode="popLayout" initial={false}>
+              {displayProperties.length > 0 ? (
+                <motion.div 
+                  key="grid"
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-32"
+                >
+                  {displayProperties.map((prop) => (
+                    <PropertyCard key={prop.id} prop={prop} />
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-40"
+                >
+                  <div className="w-24 h-24 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-10">
+                    <Search className="text-slate-300" size={40} />
+                  </div>
+                  <h3 className="text-3xl font-serif font-bold text-brand-blue dark:text-white mb-4">No assets match your criteria</h3>
+                  <p className="text-slate-500 font-light text-lg mb-10">Try broadening your search or exploring different categories.</p>
+                  <button
+                    onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
+                    className="text-brand-gold font-bold uppercase tracking-widest text-xs border-b-2 border-brand-gold pb-2 hover:opacity-70 transition-opacity"
+                  >
+                    Reset All Filters
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           )}
-        </AnimatePresence>
+        </div>
 
         {hasMore && (
           <div className="mt-40 text-center">
@@ -327,6 +335,36 @@ export default function Properties() {
             </button>
           </div>
         )}
+      </section>
+
+      {/* Property Finder Lead Magnet */}
+      <section className="max-w-7xl mx-auto px-6 mt-48 mb-32">
+        <div className="bg-brand-gold/10 dark:bg-white/5 border border-brand-gold/20 dark:border-white/10 rounded-[5rem] p-16 md:p-24 flex flex-col lg:flex-row items-center gap-20">
+          <div className="lg:w-1/2">
+            <span className="text-brand-gold font-bold uppercase tracking-[0.4em] text-[10px] mb-6 block">Personalized Search</span>
+            <h2 className="font-serif text-5xl md:text-7xl font-bold text-brand-blue dark:text-white mb-8 leading-tight">Can't Find Your <br /> <span className="italic font-normal">Ideal Asset?</span></h2>
+            <p className="text-slate-600 dark:text-slate-400 text-xl font-light leading-relaxed mb-10">
+              Our off-market portfolio contains exclusive listings not visible on this grid. Tell us your requirements and let our acquisition experts find it for you.
+            </p>
+            <div className="flex items-center gap-6">
+              <div className="flex -space-x-4">
+                {[1, 2, 3].map((i) => (
+                  <img key={i} src={`https://picsum.photos/seed/agent${i}/100/100`} className="w-14 h-14 rounded-full border-4 border-white dark:border-brand-navy object-cover" alt="Agent" referrerPolicy="no-referrer" />
+                ))}
+              </div>
+              <p className="text-brand-blue dark:text-brand-gold font-bold text-sm">Join 500+ investors in our network.</p>
+            </div>
+          </div>
+          <div className="lg:w-1/2 w-full">
+            <form className="space-y-6">
+              <input type="text" placeholder="Desired Location" className="w-full px-10 py-6 bg-white dark:bg-black/20 border border-brand-gold/20 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
+              <input type="text" placeholder="Property Type (e.g. 2 Bed, Commercial)" className="w-full px-10 py-6 bg-white dark:bg-black/20 border border-brand-gold/20 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
+              <button className="w-full bg-brand-blue dark:bg-brand-gold text-white dark:text-brand-blue py-7 rounded-3xl font-bold uppercase tracking-widest text-[10px] shadow-2xl hover:scale-[1.02] transition-all">
+                Submit Acquisition Request
+              </button>
+            </form>
+          </div>
+        </div>
       </section>
 
       {/* Newsletter / CTA */}

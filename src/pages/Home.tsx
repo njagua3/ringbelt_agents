@@ -125,7 +125,7 @@ export default function Home() {
       {/* Trust Section */}
       <section className="bg-brand-blue dark:bg-brand-navy py-20 border-y border-white/5 transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
             {[
               { label: 'Properties Managed', value: '230+', icon: Building2 },
               { label: 'Occupancy Rate', value: '97.6%', icon: Users },
@@ -144,6 +144,16 @@ export default function Home() {
                 <div className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-bold">{stat.label}</div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Partner Logos / Trust Bar */}
+          <div className="pt-20 border-t border-white/5">
+            <p className="text-center text-white/30 text-[10px] uppercase tracking-[0.5em] font-bold mb-12">Trusted by Leading Institutions</p>
+            <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-30 grayscale hover:grayscale-0 transition-all duration-700">
+              {['KCB Bank', 'Equity Bank', 'NCBA', 'Absa', 'HF Group'].map((partner) => (
+                <span key={partner} className="text-white font-serif text-2xl md:text-3xl font-bold tracking-tighter whitespace-nowrap">{partner}</span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -238,6 +248,64 @@ export default function Home() {
                     <Link to="/contact" className="w-12 h-12 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center hover:bg-brand-gold hover:text-brand-blue transition-all">
                       <ArrowRight size={20} />
                     </Link>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-32 bg-white dark:bg-brand-navy overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <span className="text-brand-gold font-bold text-[10px] uppercase tracking-[0.4em] mb-4 block">Client Perspectives</span>
+            <h2 className="font-serif text-5xl md:text-7xl font-bold text-brand-blue dark:text-white mb-8 leading-tight">
+              A Legacy of <br /> <span className="italic font-normal text-brand-gold">Satisfied Owners</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                text: "Ringbelt's management style is effortless. I've had my commercial property in Nyeri CBD managed by them for 5 years with zero vacancies.",
+                author: "Dr. James Kamau",
+                role: "Commercial Property Owner",
+                image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"
+              },
+              {
+                text: "Their advisory on asset valuation was eye-opening. They helped me reposition my portfolio for 15% higher returns in just one year.",
+                author: "Sarah Wanjiku",
+                role: "Real Estate Investor",
+                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200"
+              },
+              {
+                text: "Professionalism at its best. From the initial consultation to the final rental handshake, everything was documented and transparent.",
+                author: "Mervyn Omondi",
+                role: "Tenant & Business Owner",
+                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200"
+              }
+            ].map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-slate-50 dark:bg-white/5 p-12 rounded-[3rem] border border-slate-100 dark:border-white/10 relative group"
+              >
+                <div className="absolute top-12 right-12 text-brand-gold/10 group-hover:text-brand-gold/20 transition-colors">
+                  <Star size={64} fill="currentColor" />
+                </div>
+                <p className="text-slate-600 dark:text-white/70 text-lg md:text-xl font-light leading-relaxed mb-10 relative z-10 italic">
+                  "{t.text}"
+                </p>
+                <div className="flex items-center gap-6">
+                  <img src={t.image} alt={t.author} className="w-16 h-16 rounded-2xl object-cover shadow-xl" referrerPolicy="no-referrer" />
+                  <div>
+                    <h4 className="font-serif text-xl font-bold text-brand-blue dark:text-white">{t.author}</h4>
+                    <p className="text-brand-gold text-[10px] uppercase font-bold tracking-widest">{t.role}</p>
                   </div>
                 </div>
               </motion.div>

@@ -12,6 +12,9 @@
   --font-serif: "Playfair Display", serif;
 }
 
+/* Enable class-based dark mode in Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
 @layer base {
   html {
     @apply scroll-smooth;
