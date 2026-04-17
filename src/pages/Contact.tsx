@@ -163,7 +163,7 @@ export default function Contact() {
       <section className="max-w-7xl mx-auto px-6 pb-24">
         <div className="h-[600px] rounded-[4rem] overflow-hidden shadow-3xl border border-white/10 grayscale hover:grayscale-0 transition-all duration-1000">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.758864835695!2d36.9472!3d-0.4215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18285df939986349%3A0x705299479267156!2sNyeri!5e0!3m2!1sen!2ske!4v1620000000000!5m2!1sen!2ske"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1994.8794324178475!2d36.9472!3d-0.4215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18285dfa0904fb31%3A0x6bba31d368e5454b!2sRingbelt%20Agents%20Limited!5e0!3m2!1sen!2ske!4v1713330000000!5m2!1sen!2ske"
             width="100%"
             height="100%"
             style={{ border: 0 }}
