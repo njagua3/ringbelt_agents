@@ -51,19 +51,22 @@ export default function Contact() {
               <h2 className="font-serif text-4xl font-bold text-brand-blue dark:text-white mb-12">Contact Details</h2>
               <div className="space-y-10">
                 {[
-                  { icon: Phone, title: 'Call Us', details: ['+254 700 000 000', '+254 711 000 000'] },
-                  { icon: Mail, title: 'Email Us', details: ['info@ringbeltagents.co.ke', 'sales@ringbeltagents.co.ke'] },
-                  { icon: MapPin, title: 'Visit Us', details: ['Nyeri Town, CBD', 'Kimathi Way, Plaza House'] },
+                  { icon: Phone, title: 'Call Us', details: ['0707 046 253', '0715 324 620'] },
+                  { icon: Mail, title: 'Email Us', details: ['ringbelt2011@gmail.com'] },
+                  { icon: MapPin, title: 'Our Offices', details: [
+                    'Nyeri (H.O): Umoja Chambers, 1st Flr, Rm 4 (Opp. Mathari Stage)',
+                    'Murang\'a: Waguta Plaza, Uhuru Highway'
+                  ] },
                   { icon: Clock, title: 'Office Hours', details: ['Mon - Fri: 8:00 AM - 5:00 PM', 'Sat: 9:00 AM - 1:00 PM'] },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-8 group">
-                    <div className="w-16 h-16 bg-brand-gold/10 dark:bg-white/5 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-brand-gold transition-colors duration-500">
-                      <item.icon className="text-brand-gold group-hover:text-brand-blue transition-colors duration-500" size={28} />
+                    <div className="w-16 h-16 bg-brand-gold/10 dark:bg-brand-red/10 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-brand-red transition-colors duration-500">
+                      <item.icon className="text-brand-gold group-hover:text-white transition-colors duration-500" size={28} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-brand-blue dark:text-white mb-2 uppercase tracking-widest text-xs">{item.title}</h4>
+                      <h4 className="font-bold text-brand-blue dark:text-brand-red mb-2 uppercase tracking-widest text-[10px]">{item.title}</h4>
                       {item.details.map((detail, j) => (
-                        <p key={j} className="text-slate-600 dark:text-slate-400 font-light">{detail}</p>
+                        <p key={j} className="text-slate-600 dark:text-slate-400 font-light text-sm">{detail}</p>
                       ))}
                     </div>
                   </div>
@@ -76,7 +79,7 @@ export default function Contact() {
               <h3 className="font-serif text-2xl font-bold mb-6">Concierge Chat</h3>
               <p className="text-white/60 text-lg mb-10 font-light leading-relaxed">Need immediate assistance? Connect with our luxury concierge on WhatsApp.</p>
               <a
-                href="https://wa.me/254700000000"
+                href="https://wa.me/254707046253"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-4 bg-[#25D366] text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl"

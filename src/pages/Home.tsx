@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { ArrowRight, Building2, Star, Clock, MapPin, Users, Shield } from 'lucide-react';
+import { ArrowRight, Building2, Star, Clock, MapPin, Users, Shield, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Hero3D from '../components/Hero3D';
 
@@ -74,27 +74,33 @@ export default function Home() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="flex items-center gap-3 mb-8 md:mb-12"
+              className="flex flex-col gap-4 mb-8 md:mb-12"
             >
-              <div className="w-12 h-px bg-brand-gold" />
-              <span className="text-brand-gold font-bold uppercase tracking-[0.4em] text-[10px] md:text-xs">
-                Premium Property Management
-              </span>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-px bg-brand-red" />
+                <span className="text-brand-red font-bold uppercase tracking-[0.3em] text-[10px] md:text-xs">
+                  "Honesty, integrity and Professionalism are our pillars"
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="text-brand-gold w-4 h-4" />
+                <span className="text-white/60 text-[9px] uppercase tracking-widest font-bold">EARB Registered Agency</span>
+              </div>
             </motion.div>
             
             <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.95] mb-8 md:mb-12 tracking-tighter">
               The Gold Standard <br />
-              <span className="text-gradient-gold italic">In Real Estate</span>
+              <span className="text-white italic">In Property Leasing</span>
             </h1>
             
             <p className="text-white/80 text-lg md:text-2xl mb-10 md:mb-16 leading-relaxed max-w-2xl font-light">
-              Ringbelt Agents provides bespoke rental management and real estate solutions in Nyeri. We turn property ownership into a seamless, high-yield experience.
+              Ringbelt Agents Limited: A registered agency with the Estate Agents Registration Board (EARB), carrying over 14 years of licensed excellence in property management, valuation, and advisory across Central Kenya.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6">
               <Link
                 to="/properties"
-                className="group relative overflow-hidden bg-brand-gold text-brand-blue px-10 md:px-12 py-5 md:py-6 rounded-2xl font-bold text-base md:text-lg transition-all flex items-center justify-center gap-4 shadow-3xl hover:shadow-brand-gold/40 active:scale-95"
+                className="group relative overflow-hidden bg-brand-red text-white px-10 md:px-12 py-5 md:py-6 rounded-2xl font-bold text-base md:text-lg transition-all flex items-center justify-center gap-4 shadow-3xl hover:shadow-brand-red/40 active:scale-95"
               >
                 <span className="relative z-10">View Listings</span>
                 <ArrowRight size={22} className="relative z-10 group-hover:translate-x-1 transition-transform" />
@@ -121,10 +127,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
             {[
-              { label: 'Properties Managed', value: '250+', icon: Building2 },
-              { label: 'Satisfied Clients', value: '1.8k', icon: Users },
-              { label: 'Years of Trust', value: '12', icon: Clock },
-              { label: 'Market Share', value: '85%', icon: Star },
+              { label: 'Properties Managed', value: '230+', icon: Building2 },
+              { label: 'Occupancy Rate', value: '97.6%', icon: Users },
+              { label: 'Years of Trust', value: '14+', icon: Clock },
+              { label: 'Market Presence', value: 'Nyeri & Murang\'a', icon: MapPin },
             ].map((stat, i) => (
               <motion.div 
                 key={i}
@@ -255,7 +261,7 @@ export default function Home() {
               Whether you're looking for a luxury home or professional property management, Ringbelt is your definitive partner in Nyeri.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Link to="/contact" className="bg-brand-gold dark:bg-brand-blue text-brand-blue dark:text-white px-12 py-6 rounded-full font-bold text-xl hover:scale-105 transition-all shadow-2xl">
+              <Link to="/contact" className="bg-brand-red text-white px-12 py-6 rounded-full font-bold text-xl hover:scale-105 transition-all shadow-2xl">
                 Get in Touch
               </Link>
               <Link to="/about" className="bg-white/10 dark:bg-black/10 text-white dark:text-brand-blue border border-white/20 dark:border-black/20 px-12 py-6 rounded-full font-bold text-xl hover:bg-white/20 dark:hover:bg-black/20 transition-all">

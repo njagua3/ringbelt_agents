@@ -41,8 +41,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-4 group">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-brand-gold rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-500">
-            <Building2 className="text-brand-blue w-6 h-6 md:w-7 md:h-7" />
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-brand-red rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-500">
+            <Building2 className="text-white w-6 h-6 md:w-7 md:h-7" />
           </div>
           <div className="flex flex-col">
             <span className={cn(
@@ -53,9 +53,9 @@ export default function Navbar() {
             </span>
             <span className={cn(
               "text-[8px] md:text-[9px] uppercase tracking-[0.4em] font-bold transition-colors duration-500",
-              scrolled ? "text-brand-gold" : "text-brand-gold-light"
+              scrolled ? "text-brand-red" : "text-white/80"
             )}>
-              Real Estate Agents
+              Agents Limited
             </span>
           </div>
         </Link>
@@ -81,7 +81,7 @@ export default function Navbar() {
             <ThemeToggle />
             <Link
               to="/login"
-              className="bg-brand-gold hover:bg-brand-gold-light text-brand-blue px-6 lg:px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all shadow-xl hover:shadow-brand-gold/20 active:scale-95"
+              className="bg-brand-red hover:bg-brand-red/90 text-white px-6 lg:px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all shadow-xl hover:shadow-brand-red/20 active:scale-95"
             >
               Get Started
             </Link>

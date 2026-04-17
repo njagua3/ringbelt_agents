@@ -29,19 +29,22 @@ export default function About() {
                 </span>
                 <h1 className="font-serif text-6xl md:text-8xl font-bold text-brand-blue dark:text-white mb-10 leading-[0.9] tracking-tighter">
                   Excellence <br />
-                  <span className="text-gradient-gold italic">In Every Detail</span>
+                  <span className="text-gradient-brand italic font-normal">In Every Detail</span>
                 </h1>
-                <p className="text-slate-600 dark:text-slate-400 text-xl leading-relaxed mb-12 font-light">
-                  Ringbelt Real Estate Agents was established to redefine the property landscape in Nyeri. We don't just manage buildings; we curate lifestyles, protect multi-generational investments, and provide a sanctuary for those who value the finer things in life.
+                <p className="text-slate-600 dark:text-slate-400 text-xl leading-relaxed mb-12 font-light italic">
+                  "Honesty, integrity and Professionalism are our pillars"
+                </p>
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-12 font-light">
+                  Ringbelt Agents Limited is a registered agency with the Estate Agents Registration Board (EARB) and a reputable real estate firm with over 14 years of experience in the industry. We specialize in property leasing, valuation, and management, offering tailored solutions to maximize returns for our clients.
                 </p>
                 <div className="grid grid-cols-2 gap-12 border-t border-slate-100 dark:border-white/5 pt-12">
                   <div>
-                    <div className="text-5xl font-serif font-bold text-brand-blue dark:text-brand-gold mb-2">12+</div>
-                    <div className="text-slate-500 dark:text-slate-500 text-xs uppercase tracking-widest font-bold">Years of Excellence</div>
+                    <div className="text-5xl font-serif font-bold text-brand-blue dark:text-brand-red mb-2">14+</div>
+                    <div className="text-slate-500 dark:text-slate-500 text-xs uppercase tracking-widest font-bold">Years of Trust</div>
                   </div>
                   <div>
-                    <div className="text-5xl font-serif font-bold text-brand-blue dark:text-brand-gold mb-2">250+</div>
-                    <div className="text-slate-500 dark:text-slate-500 text-xs uppercase tracking-widest font-bold">Premium Assets</div>
+                    <div className="text-5xl font-serif font-bold text-brand-blue dark:text-brand-red mb-2">230+</div>
+                    <div className="text-slate-500 dark:text-slate-500 text-xs uppercase tracking-widest font-bold">Properties Managed</div>
                   </div>
                 </div>
               </motion.div>
@@ -79,18 +82,18 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {[
               {
-                title: 'Unmatched Local Intelligence',
-                desc: 'We possess a granular understanding of Nyeri\'s neighborhoods, from the quiet suburbs of Mweiga to the bustling CBD. This data-driven insight ensures your assets are always positioned for maximum yield.',
-                icon: MapPin
+                title: 'Proven Market Record',
+                desc: 'Achieving an industry-leading 97.6% occupancy rate for all properties under our care. Our prompt monthly payment cycle ensures financial stability for every property owner.',
+                icon: Award
               },
               {
-                title: 'High-Touch Management',
-                desc: 'Our management style is proactive, not reactive. We anticipate maintenance needs and tenant concerns before they become issues, preserving the long-term value of your property.',
+                title: 'Dedicated Team',
+                desc: 'Skilled agents with in-depth local knowledge and a commitment to personalized service tailored to your unique property goals.',
                 icon: ShieldCheck
               },
               {
-                title: 'Elite Marketing Network',
-                desc: 'Your property isn\'t just listed; it\'s showcased. We leverage a high-net-worth network and premium digital marketing to find the right tenants and buyers faster than anyone else.',
+                title: 'Aggressive Marketing',
+                desc: 'Access to a strong network of premium buyers, tenants, and investors, reducing vacancy periods and maximizing your asset\'s visibility.',
                 icon: TrendingUp
               }
             ].map((item, i) => (
@@ -123,10 +126,10 @@ export default function About() {
               
               <div className="space-y-12">
                 {[
-                  { step: '01', title: 'Consultation', desc: 'We begin by understanding your specific goals, whether it\'s passive income or capital appreciation.' },
-                  { step: '02', title: 'Strategy', desc: 'We develop a bespoke management or sales plan tailored to your property\'s unique profile.' },
-                  { step: '03', title: 'Execution', desc: 'Our team handles every detail with precision, from marketing to legal compliance.' },
-                  { step: '04', title: 'Optimization', desc: 'Continuous monitoring and reporting to ensure your investment is performing at its peak.' },
+                  { step: '01', title: 'Consultation', desc: 'Initial meeting to understand your goals and current property portfolio.' },
+                  { step: '02', title: 'Assessment', desc: 'In-depth evaluation of your property\'s potential and market positioning.' },
+                  { step: '03', title: 'Customized Plan', desc: 'A tailored strategy for leasing, management, or advisory services.' },
+                  { step: '04', title: 'Execution', desc: 'Full-service handling of all operations while keeping you informed with transparent reporting.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-8 group">
                     <span className="font-serif text-4xl font-bold text-brand-gold/30 group-hover:text-brand-gold transition-colors">{item.step}</span>

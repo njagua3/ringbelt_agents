@@ -11,16 +11,16 @@ export default function Footer() {
         {/* Brand Section */}
         <div className="space-y-8">
           <Link to="/" className="flex items-center gap-4 group">
-            <div className="w-12 h-12 bg-brand-gold rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-500">
-              <Building2 className="text-brand-blue w-7 h-7" />
+            <div className="w-12 h-12 bg-brand-red rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-500">
+              <Building2 className="text-white w-7 h-7" />
             </div>
             <div className="flex flex-col">
               <span className="font-serif font-bold text-2xl leading-none tracking-tighter">Ringbelt</span>
-              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-gold">Real Estate Agents</span>
+              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-red">Agents Limited</span>
             </div>
           </Link>
           <p className="text-white/50 text-lg font-light leading-relaxed">
-            Redefining the real estate experience in Nyeri through uncompromising quality and local expertise.
+            "Honesty, integrity and Professionalism are our pillars"
           </p>
           <div className="flex gap-6">
             {[Facebook, Instagram, Twitter].map((Icon, i) => (
@@ -69,27 +69,33 @@ export default function Footer() {
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
                 <MapPin className="text-brand-gold" size={18} />
               </div>
-              <span className="leading-relaxed">Nyeri Town, <br />Central Kenya</span>
+              <span className="leading-relaxed">
+                Nyeri (H.O): Umoja Chambers, Rm 4 <br />
+                Murang'a: Waguta Plaza
+              </span>
             </li>
             <li className="flex gap-5">
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
                 <Phone className="text-brand-gold" size={18} />
               </div>
-              <span>+254 700 000 000</span>
+              <div className="flex flex-col">
+                <span>0707 046 253</span>
+                <span>0715 324 620</span>
+              </div>
             </li>
             <li className="flex gap-5">
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
                 <Mail className="text-brand-gold" size={18} />
               </div>
-              <span className="break-all">info@ringbeltagents.co.ke</span>
+              <span className="break-all">ringbelt2011@gmail.com</span>
             </li>
           </ul>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold">
-        <p>© {currentYear} Ringbelt Real Estate Agents.</p>
-        <p>Crafting Excellence in Real Estate.</p>
+        <p>© {currentYear} Ringbelt Agents Limited.</p>
+        <p>Honesty • Integrity • Professionalism</p>
       </div>
     </footer>
   );
