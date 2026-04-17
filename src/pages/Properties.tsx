@@ -22,7 +22,7 @@ const assetClasses = [
   { name: 'Premium Estates', icon: Sparkles, count: 'Exclusive', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800', category: 'Premium Properties' },
   { name: 'Urban Residential', icon: Home, count: 'High Demand', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=800', category: '2 Bedroom' },
   { name: 'Commercial Hubs', icon: Briefcase, count: 'Prime Yield', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800', category: 'Commercial Spaces' },
-  { name: 'Student Living', icon: GraduationCap, count: 'Strategic', image: 'https://images.unsplash.com/photo-1555854811-80e3244a4415?auto=format&fit=crop&q=80&w=800', category: 'Student Hostels' },
+  { name: 'Student Living', icon: GraduationCap, count: 'Strategic', image: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?auto=format&fit=crop&q=80&w=800', category: 'Student Hostels' },
 ];
 
 interface Property {
@@ -340,7 +340,7 @@ export default function Properties() {
             <div className="flex flex-col sm:flex-row gap-6">
               <input 
                 type="email" 
-                placeholder="Professional Email Address" 
+                placeholder="Email Address" 
                 className="flex-grow px-10 py-6 bg-white/10 border border-white/20 rounded-[2rem] text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50 backdrop-blur-md"
               />
               <button className="bg-brand-gold text-brand-blue px-12 py-6 rounded-[2rem] font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl">
