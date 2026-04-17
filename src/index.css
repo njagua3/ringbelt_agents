@@ -41,4 +41,11 @@
     background-image: radial-gradient(at 0% 0%, rgba(63, 67, 150, 0.15) 0, transparent 50%), 
                       radial-gradient(at 100% 100%, rgba(225, 37, 27, 0.1) 0, transparent 50%);
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

@@ -35,6 +35,8 @@ export default function Navbar() {
   const isAdminPage = location.pathname === '/admin';
   const needsDarkText = (isAboutPage || isLoginPage || isAdminPage) && !scrolled;
 
+  if (isAdminPage || isLoginPage) return null;
+
   return (
     <nav
       className={cn(

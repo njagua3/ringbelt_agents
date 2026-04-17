@@ -1,7 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Facebook, Music, Twitter, Mail, Phone, MapPin, Building2 } from 'lucide-react';
 
 export default function Footer() {
+  const location = useLocation();
+  const isAdminPage = location.pathname === '/admin';
+  const isLoginPage = location.pathname === '/login';
+
+  if (isAdminPage || isLoginPage) return null;
+
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [

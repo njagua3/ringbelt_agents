@@ -21,7 +21,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-20 flex items-center justify-center bg-slate-50 dark:bg-brand-navy px-4 transition-colors duration-500">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-brand-navy px-4 transition-colors duration-500">
       <div className="absolute inset-0 z-0 overflow-hidden opacity-30 pointer-events-none">
         <div className="absolute top-0 left-0 w-[50rem] h-[50rem] bg-brand-gold/20 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[50rem] h-[50rem] bg-brand-blue/20 rounded-full translate-x-1/2 translate-y-1/2 blur-[120px]" />

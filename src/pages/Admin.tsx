@@ -31,6 +31,7 @@ export default function Admin() {
   const { showToast } = useToast();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'properties'>('dashboard');
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adminSearch, setAdminSearch] = useState('');
@@ -216,14 +217,20 @@ export default function Admin() {
           
           <nav className="space-y-4">
             <button 
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-full flex items-center gap-4 p-4 bg-brand-gold text-brand-blue rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-xl"
+              onClick={() => setActiveTab('dashboard')}
+              className={cn(
+                "w-full flex items-center gap-4 p-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] transition-all",
+                activeTab === 'dashboard' ? "bg-brand-gold text-brand-blue shadow-xl" : "text-white/60 hover:bg-white/10 hover:text-white"
+              )}
             >
               <LayoutDashboard size={18} /> Dashboard
             </button>
             <button 
-              onClick={() => document.getElementById('property-list')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full flex items-center gap-4 p-4 text-white/60 hover:bg-white/10 hover:text-white rounded-2xl transition-all uppercase tracking-widest text-[10px] font-bold"
+              onClick={() => setActiveTab('properties')}
+              className={cn(
+                "w-full flex items-center gap-4 p-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] transition-all",
+                activeTab === 'properties' ? "bg-brand-gold text-brand-blue shadow-xl" : "text-white/60 hover:bg-white/10 hover:text-white"
+              )}
             >
               <Building2 size={18} /> Properties
             </button>
@@ -241,12 +248,16 @@ export default function Admin() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow lg:ml-72 p-8 md:p-12 pt-32">
+      <main className="flex-grow lg:ml-72 p-8 md:p-12 pt-16">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-8">
             <div>
-              <h1 className="text-5xl font-serif font-bold text-brand-blue dark:text-white mb-4 tracking-tighter">Asset Management</h1>
-              <p className="text-slate-700 dark:text-slate-200 font-light text-lg">Curate and oversee your premium property portfolio</p>
+              <h1 className="text-5xl font-serif font-bold text-brand-blue dark:text-white mb-4 tracking-tighter">
+                {activeTab === 'dashboard' ? 'Admin Dashboard' : 'Asset Management'}
+              </h1>
+              <p className="text-slate-700 dark:text-slate-200 font-light text-lg">
+                {activeTab === 'dashboard' ? 'Market Overview & Performance' : 'Curate and oversee your premium property portfolio'}
+              </p>
             </div>
             <div className="flex items-center gap-4">
               <button
@@ -264,145 +275,179 @@ export default function Admin() {
             </div>
           </div>
 
-          {/* Stats Summary */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-16">
-            {[
-              { label: 'Total Assets', value: properties.length, color: 'text-brand-blue dark:text-white' },
-              { label: 'Available', value: properties.filter(p => p.available).length, color: 'text-green-600 dark:text-green-400' },
-              { label: 'Occupied', value: properties.filter(p => !p.available).length, color: 'text-brand-gold' },
-            ].map((stat, i) => (
-              <div key={i} className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10">
-                <div className="text-brand-blue/60 dark:text-brand-gold/80 text-[10px] uppercase tracking-[0.2em] font-bold mb-4">{stat.label}</div>
-                <div className={`text-5xl font-serif font-bold ${stat.color}`}>{stat.value}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Property List */}
-          <div id="property-list" className="mb-8 flex flex-col md:flex-row gap-6 items-center justify-between">
-            <div className="relative w-full md:w-96 group">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-gold group-focus-within:scale-110 transition-transform" size={18} />
-              <input 
-                type="text"
-                placeholder="Search assets..."
-                value={adminSearch}
-                onChange={(e) => setAdminSearch(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50 dark:text-white transition-all shadow-lg"
-              />
-            </div>
-            <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto no-scrollbar pb-2 md:pb-0">
-              <button 
-                onClick={() => setAdminCategory('All')}
-                className={cn(
-                  "px-6 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all whitespace-nowrap",
-                  adminCategory === 'All' ? "bg-brand-blue text-white shadow-lg" : "bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10"
-                )}
+          <AnimatePresence mode="wait">
+            {activeTab === 'dashboard' ? (
+              <motion.div
+                key="dashboard"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="space-y-16"
               >
-                All
-              </button>
-              {categories.map(cat => (
-                <button 
-                  key={cat}
-                  onClick={() => setAdminCategory(cat)}
-                  className={cn(
-                    "px-6 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all whitespace-nowrap",
-                    adminCategory === cat ? "bg-brand-blue text-white shadow-lg" : "bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10"
-                  )}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="glass dark:glass-dark rounded-[3rem] shadow-3xl border border-white/10 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-white/5 border-b border-white/5">
-                    <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Asset</th>
-                    <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Classification</th>
-                    <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Valuation</th>
-                    <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Status</th>
-                    <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={5} className="p-32 text-center text-slate-600 dark:text-slate-400 font-light italic">Synchronizing assets...</td>
-                    </tr>
-                  ) : filteredAdminProperties.map((prop) => (
-                    <tr key={prop.id} className="hover:bg-white/5 transition-colors group">
-                      <td className="p-8">
-                        <div className="flex items-center gap-6">
-                          <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg">
-                            <img 
-                              src={optimizeImage(prop.image)} 
-                              className="w-full h-full object-cover" 
-                              alt="" 
-                              referrerPolicy="no-referrer"
-                            />
-                          </div>
-                          <div>
-                            <div className="font-bold text-brand-blue dark:text-white text-lg group-hover:text-brand-gold transition-colors flex items-center gap-3">
-                              {prop.title}
-                              {prop.featured && (
-                                <span className="px-2 py-0.5 bg-brand-gold text-brand-blue text-[8px] font-bold uppercase tracking-widest rounded-md">Featured</span>
-                              )}
-                            </div>
-                            <div className="text-xs text-slate-700 dark:text-slate-200 font-light">{prop.location}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-8">
-                        <span className="px-4 py-1.5 bg-brand-gold/10 text-brand-gold rounded-full text-[9px] font-bold uppercase tracking-widest border border-brand-gold/20">
-                          {prop.category}
-                        </span>
-                      </td>
-                      <td className="p-8 font-serif font-bold text-brand-blue dark:text-brand-gold text-xl">{prop.price}</td>
-                      <td className="p-8">
-                        <button 
-                          onClick={() => toggleAvailability(prop.id, prop.available)}
-                          className={cn(
-                            "px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all",
-                            prop.available 
-                              ? "bg-green-500/10 text-green-500 border border-green-500/20" 
-                              : "bg-red-500/10 text-red-500 border border-red-500/20"
-                          )}
-                        >
-                          {prop.available ? 'Available' : 'Occupied'}
-                        </button>
-                      </td>
-                      <td className="p-8 text-right">
-                        <div className="flex items-center justify-end gap-4">
-                          <button 
-                            onClick={() => window.open('/properties', '_blank')}
-                            className="p-3 text-brand-blue/60 dark:text-white/60 hover:text-brand-gold hover:bg-brand-gold/10 rounded-xl transition-all"
-                            title="View on Site"
-                          >
-                            <Search size={18} />
-                          </button>
-                          <button 
-                            onClick={() => handleEdit(prop)}
-                            className="p-3 text-brand-blue/60 dark:text-white/60 hover:text-brand-gold hover:bg-brand-gold/10 rounded-xl transition-all"
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                          <button 
-                            onClick={() => setConfirmDelete(prop.id)}
-                            className="p-3 text-brand-blue/60 dark:text-white/60 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                {/* Stats Summary */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                  {[
+                    { label: 'Total Assets', value: properties.length, color: 'text-brand-blue dark:text-white' },
+                    { label: 'Available', value: properties.filter(p => p.available).length, color: 'text-green-600 dark:text-green-400' },
+                    { label: 'Occupied', value: properties.filter(p => !p.available).length, color: 'text-brand-gold' },
+                  ].map((stat, i) => (
+                    <div key={i} className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10">
+                      <div className="text-brand-blue/60 dark:text-brand-gold/80 text-[10px] uppercase tracking-[0.2em] font-bold mb-4">{stat.label}</div>
+                      <div className={`text-5xl font-serif font-bold ${stat.color}`}>{stat.value}</div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10 h-[400px] flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-brand-blue/30 dark:text-white/20 uppercase tracking-[0.4em] font-bold text-xs mb-4">Analytics</div>
+                      <p className="text-slate-500 italic">Portfolio statistics and metrics visualization</p>
+                    </div>
+                  </div>
+                  <div className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10 h-[400px] flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-brand-blue/30 dark:text-white/20 uppercase tracking-[0.4em] font-bold text-xs mb-4">Recent Activity</div>
+                      <p className="text-slate-500 italic">Recent listing updates and management logs</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="properties"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+              >
+                {/* Property List */}
+                <div className="mb-8 flex flex-col md:flex-row gap-6 items-center justify-between">
+                  <div className="relative w-full md:w-96 group">
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-gold group-focus-within:scale-110 transition-transform" size={18} />
+                    <input 
+                      type="text"
+                      placeholder="Search assets..."
+                      value={adminSearch}
+                      onChange={(e) => setAdminSearch(e.target.value)}
+                      className="w-full pl-14 pr-6 py-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50 dark:text-white transition-all shadow-lg"
+                    />
+                  </div>
+                  <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto no-scrollbar pb-2 md:pb-0">
+                    <button 
+                      onClick={() => setAdminCategory('All')}
+                      className={cn(
+                        "px-6 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all whitespace-nowrap",
+                        adminCategory === 'All' ? "bg-brand-blue text-white shadow-lg" : "bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10"
+                      )}
+                    >
+                      All
+                    </button>
+                    {categories.map(cat => (
+                      <button 
+                        key={cat}
+                        onClick={() => setAdminCategory(cat)}
+                        className={cn(
+                          "px-6 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all whitespace-nowrap",
+                          adminCategory === cat ? "bg-brand-blue text-white shadow-lg" : "bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10"
+                        )}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="glass dark:glass-dark rounded-[3rem] shadow-3xl border border-white/10 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-white/5 border-b border-white/5">
+                          <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Asset</th>
+                          <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Classification</th>
+                          <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Valuation</th>
+                          <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Status</th>
+                          <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {loading ? (
+                          <tr>
+                            <td colSpan={5} className="p-32 text-center text-slate-600 dark:text-slate-400 font-light italic">Synchronizing assets...</td>
+                          </tr>
+                        ) : filteredAdminProperties.map((prop) => (
+                          <tr key={prop.id} className="hover:bg-white/5 transition-colors group">
+                            <td className="p-8">
+                              <div className="flex items-center gap-6">
+                                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg">
+                                  <img 
+                                    src={optimizeImage(prop.image)} 
+                                    className="w-full h-full object-cover" 
+                                    alt="" 
+                                    referrerPolicy="no-referrer"
+                                  />
+                                </div>
+                                <div>
+                                  <div className="font-bold text-brand-blue dark:text-white text-lg group-hover:text-brand-gold transition-colors flex items-center gap-3">
+                                    {prop.title}
+                                    {prop.featured && (
+                                      <span className="px-2 py-0.5 bg-brand-gold text-brand-blue text-[8px] font-bold uppercase tracking-widest rounded-md">Featured</span>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-slate-700 dark:text-slate-200 font-light">{prop.location}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-8">
+                              <span className="px-4 py-1.5 bg-brand-gold/10 text-brand-gold rounded-full text-[9px] font-bold uppercase tracking-widest border border-brand-gold/20">
+                                {prop.category}
+                              </span>
+                            </td>
+                            <td className="p-8 font-serif font-bold text-brand-blue dark:text-brand-gold text-xl">{prop.price}</td>
+                            <td className="p-8">
+                              <button 
+                                onClick={() => toggleAvailability(prop.id, prop.available)}
+                                className={cn(
+                                  "px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all",
+                                  prop.available 
+                                    ? "bg-green-500/10 text-green-500 border border-green-500/20" 
+                                    : "bg-red-500/10 text-red-500 border border-red-500/20"
+                                )}
+                              >
+                                {prop.available ? 'Available' : 'Occupied'}
+                              </button>
+                            </td>
+                            <td className="p-8 text-right">
+                              <div className="flex items-center justify-end gap-4">
+                                <button 
+                                  onClick={() => window.open('/properties', '_blank')}
+                                  className="p-3 text-brand-blue/60 dark:text-white/60 hover:text-brand-gold hover:bg-brand-gold/10 rounded-xl transition-all"
+                                  title="View on Site"
+                                >
+                                  <Search size={18} />
+                                </button>
+                                <button 
+                                  onClick={() => handleEdit(prop)}
+                                  className="p-3 text-brand-blue/60 dark:text-white/60 hover:text-brand-gold hover:bg-brand-gold/10 rounded-xl transition-all"
+                                >
+                                  <Edit2 size={18} />
+                                </button>
+                                <button 
+                                  onClick={() => setConfirmDelete(prop.id)}
+                                  className="p-3 text-brand-blue/60 dark:text-white/60 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </main>
 
