@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { Target, Eye, CheckCircle2, Award, Shield, Zap, MapPin, ShieldCheck, TrendingUp } from 'lucide-react';
 
 export default function About() {
@@ -252,9 +253,9 @@ export default function About() {
             <span className="italic font-normal text-brand-gold">The Difference?</span>
           </h2>
           <div className="flex justify-center">
-            <a href="/contact" className="bg-brand-blue dark:bg-brand-gold text-white dark:text-brand-blue px-16 py-6 rounded-full font-bold text-xl hover:scale-105 transition-all shadow-2xl">
+            <Link to="/contact" className="bg-brand-blue dark:bg-brand-gold text-white dark:text-brand-blue px-16 py-6 rounded-full font-bold text-xl hover:scale-105 transition-all shadow-2xl">
               Work With Us
-            </a>
+            </Link>
           </div>
         </div>
       </section>

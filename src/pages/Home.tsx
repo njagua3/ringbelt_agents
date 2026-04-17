@@ -272,19 +272,19 @@ export default function Home() {
                 text: "Ringbelt's management style is effortless. I've had my commercial property in Nyeri CBD managed by them for 5 years with zero vacancies.",
                 author: "Dr. James Kamau",
                 role: "Commercial Property Owner",
-                image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=200"
+                image: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&q=80&w=200"
               },
               {
                 text: "Their advisory on asset valuation was eye-opening. They helped me reposition my portfolio for 15% higher returns in just one year.",
                 author: "Sarah Wanjiku",
                 role: "Real Estate Investor",
-                image: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=200"
+                image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=200"
               },
               {
                 text: "Professionalism at its best. From the initial consultation to the final rental handshake, everything was documented and transparent.",
                 author: "Mervyn Omondi",
                 role: "Tenant & Business Owner",
-                image: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=200"
+                image: "https://images.unsplash.com/photo-1507152832244-10d45c7eda57?auto=format&fit=crop&q=80&w=200"
               }
             ].map((t, i) => (
               <motion.div

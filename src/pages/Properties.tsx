@@ -1,7 +1,9 @@
 import { useState, useEffect, memo } from 'react';
 import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/components/Toast';
 import { db, collection, onSnapshot, query, orderBy, limit } from '@/lib/firebase';
 import { sampleProperties } from '@/constants/initialData';
 
@@ -93,9 +95,12 @@ const PropertyCard = memo(({ prop }: { prop: Property }) => (
 
       {/* Hover Overlay */}
       <div className="absolute inset-0 bg-brand-blue/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-sm">
-        <button className="bg-white text-brand-blue px-12 py-5 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-2xl translate-y-8 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-3">
+        <Link 
+          to="/contact"
+          className="bg-white text-brand-blue px-12 py-5 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-2xl translate-y-8 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-3"
+        >
           View Full Asset <ArrowRight size={16} />
-        </button>
+        </Link>
       </div>
     </div>
 
@@ -127,6 +132,7 @@ const PropertyCard = memo(({ prop }: { prop: Property }) => (
 ));
 
 export default function Properties() {
+  const { showToast } = useToast();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [properties, setProperties] = useState<Property[]>(
@@ -160,6 +166,12 @@ export default function Properties() {
 
   const displayProperties = filteredProperties.slice(0, displayLimit);
   const hasMore = filteredProperties.length > displayLimit;
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    showToast('Your request has been submitted successfully.', 'success');
+    (e.target as HTMLFormElement).reset();
+  };
 
   return (
     <div className="pt-20 pb-32 dark:bg-brand-navy min-h-screen transition-colors duration-500">
@@ -356,10 +368,10 @@ export default function Properties() {
             </div>
           </div>
           <div className="lg:w-1/2 w-full">
-            <form className="space-y-6">
-              <input type="text" placeholder="Desired Location" className="w-full px-10 py-6 bg-white dark:bg-black/20 border border-brand-gold/20 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
-              <input type="text" placeholder="Property Type (e.g. 2 Bed, Commercial)" className="w-full px-10 py-6 bg-white dark:bg-black/20 border border-brand-gold/20 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
-              <button className="w-full bg-brand-blue dark:bg-brand-gold text-white dark:text-brand-blue py-7 rounded-3xl font-bold uppercase tracking-widest text-[10px] shadow-2xl hover:scale-[1.02] transition-all">
+            <form className="space-y-6" onSubmit={handleFormSubmit}>
+              <input type="text" placeholder="Desired Location" required className="w-full px-10 py-6 bg-white dark:bg-black/20 border border-brand-gold/20 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
+              <input type="text" placeholder="Property Type (e.g. 2 Bed, Commercial)" required className="w-full px-10 py-6 bg-white dark:bg-black/20 border border-brand-gold/20 rounded-3xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
+              <button type="submit" className="w-full bg-brand-blue dark:bg-brand-gold text-white dark:text-brand-blue py-7 rounded-3xl font-bold uppercase tracking-widest text-[10px] shadow-2xl hover:scale-[1.02] transition-all">
                 Submit Acquisition Request
               </button>
             </form>
@@ -375,16 +387,17 @@ export default function Properties() {
             <span className="text-brand-gold font-bold uppercase tracking-[0.4em] text-[10px] mb-8 block">Exclusive Access</span>
             <h2 className="font-serif text-6xl md:text-8xl font-bold text-white mb-10">Stay Ahead of <br /> <span className="text-brand-gold italic font-normal">The Market</span></h2>
             <p className="text-white/60 text-xl mb-16 font-light leading-relaxed">Join our inner circle to receive early access to off-market premium listings and quarterly market intelligence reports.</p>
-            <div className="flex flex-col sm:flex-row gap-6">
+            <form className="flex flex-col sm:flex-row gap-6" onSubmit={handleFormSubmit}>
               <input 
                 type="email" 
                 placeholder="Email Address" 
+                required
                 className="flex-grow px-10 py-6 bg-white/10 border border-white/20 rounded-[2rem] text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50 backdrop-blur-md"
               />
-              <button className="bg-brand-gold text-brand-blue px-12 py-6 rounded-[2rem] font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl">
+              <button type="submit" className="bg-brand-gold text-brand-blue px-12 py-6 rounded-[2rem] font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl">
                 Join Now
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </section>

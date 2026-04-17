@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Phone, Mail, MapPin, Clock, Send, MessageCircle, CheckCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, MessageCircle, CheckCircle, Facebook, Music } from 'lucide-react';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -10,6 +10,11 @@ export default function Contact() {
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 5000);
   };
+
+  const socialLinks = [
+    { Icon: Facebook, href: 'https://www.facebook.com/profile.php?id=61567743868381', label: 'Facebook' },
+    { Icon: Music, href: 'https://vm.tiktok.com/ZS9LqxarPWbgP-EG1RH/', label: 'TikTok' },
+  ];
 
   return (
     <div className="pt-24 pb-20 dark:bg-brand-navy min-h-screen transition-colors duration-500">
@@ -70,6 +75,25 @@ export default function Contact() {
                       ))}
                     </div>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Social Media links */}
+            <div className="space-y-6">
+              <h3 className="font-serif text-2xl font-bold text-brand-blue dark:text-white">Follow Our Community</h3>
+              <div className="flex gap-4">
+                {socialLinks.map(({ Icon, href, label }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-14 h-14 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center hover:bg-brand-gold hover:text-brand-blue transition-all duration-300 group shadow-lg"
+                  >
+                    <Icon size={24} className="group-hover:scale-110 transition-transform" />
+                  </a>
                 ))}
               </div>
             </div>

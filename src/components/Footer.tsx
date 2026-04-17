@@ -11,9 +11,8 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { Icon: Facebook, href: '#', label: 'Facebook' },
-    { Icon: Music, href: '#', label: 'TikTok' },
-    { Icon: Twitter, href: '#', label: 'Twitter' },
+    { Icon: Facebook, href: 'https://www.facebook.com/profile.php?id=61567743868381', label: 'Facebook' },
+    { Icon: Music, href: 'https://vm.tiktok.com/ZS9LqxarPWbgP-EG1RH/', label: 'TikTok' },
   ];
 
   return (
@@ -39,6 +38,8 @@ export default function Footer() {
               <a 
                 key={i} 
                 href={href} 
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={label}
                 className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-brand-gold hover:text-brand-blue transition-all duration-300 group"
               >
