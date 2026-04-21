@@ -32,7 +32,7 @@ function AbstractShape() {
 function Grid() {
   return (
     <gridHelper 
-      args={[100, 50, '#C5A059', '#1e306e']} 
+      args={[100, 50, '#C5A059', '#003B95']} 
       position={[0, -5, 0]} 
       rotation={[Math.PI / 10, 0, 0]}
     />
@@ -46,7 +46,7 @@ export default function Hero3D() {
         <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} color="#E5C38B" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#1e306e" />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#003B95" />
         
         <AbstractShape />
         <Grid />

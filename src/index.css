@@ -2,11 +2,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-blue: #1e306e;
+  --color-brand-blue: #003B95;
   --color-brand-red: #ED3237;
   --color-brand-gold: #C5A059;
   --color-brand-gold-light: #E5C38B;
-  --color-brand-navy: #0f173d;
+  --color-brand-navy: #000c1f;
   
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", serif;
@@ -38,8 +38,8 @@
     @apply bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue bg-clip-text text-transparent;
   }
   .bg-mesh {
-    background-image: radial-gradient(at 0% 0%, rgba(63, 67, 150, 0.15) 0, transparent 50%), 
-                      radial-gradient(at 100% 100%, rgba(225, 37, 27, 0.1) 0, transparent 50%);
+    background-image: radial-gradient(at 0% 0%, rgba(0, 59, 149, 0.15) 0, transparent 50%), 
+                      radial-gradient(at 100% 100%, rgba(237, 50, 55, 0.1) 0, transparent 50%);
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;

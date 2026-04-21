@@ -7,7 +7,13 @@ interface LogoProps {
   scrolled?: boolean;
 }
 
+import { Users, Key, Home, Settings } from 'lucide-react';
+
 export default function Logo({ className, isDark = false, scrolled = false }: LogoProps) {
+  const isLogoDark = scrolled || isDark;
+  const brandBlue = "#003B95"; // Vibrant brand blue from image
+  const brandRed = "#ED3237";
+
   return (
     <div className={cn("flex flex-col items-center md:items-start select-none", className)}>
       <div className="flex items-center gap-3 md:gap-4">
@@ -20,30 +26,27 @@ export default function Logo({ className, isDark = false, scrolled = false }: Lo
             xmlns="http://www.w3.org/2000/svg"
           >
             {/* Chimney */}
-            <path d="M30 15V25H38V18L30 15Z" className="fill-brand-blue" />
+            <path d="M30 15V25H38V18L30 15Z" fill={brandBlue} />
             
             {/* Roof - Left Shadow Part */}
-            <path d="M10 40L50 10V25L20 45L10 40Z" className="fill-brand-blue" />
+            <path d="M10 40L50 10V25L20 45L10 40Z" fill={brandBlue} />
             
             {/* Roof - Right Main Part */}
-            <path d="M50 10L90 40L80 45L50 22V10Z" className="fill-brand-red" />
+            <path d="M50 10L90 40L80 45L50 22V10Z" fill={brandRed} />
             
             {/* Window Panes */}
-            <rect x="47" y="27" width="3" height="3" className="fill-brand-blue" />
-            <rect x="52" y="27" width="3" height="3" className="fill-brand-blue" />
-            <rect x="47" y="32" width="3" height="3" className="fill-brand-blue" />
-            <rect x="52" y="32" width="3" height="3" className="fill-brand-blue" />
+            <rect x="47" y="27" width="3" height="3" fill={brandBlue} />
+            <rect x="52" y="27" width="3" height="3" fill={brandBlue} />
+            <rect x="47" y="32" width="3" height="3" fill={brandBlue} />
+            <rect x="52" y="32" width="3" height="3" fill={brandBlue} />
             
             {/* Swoosh Underneath */}
             <path 
               d="M10 50C30 45 70 45 90 50" 
-              stroke="currentColor" 
+              stroke={isLogoDark ? brandBlue : "white"} 
               strokeWidth="2.5" 
               strokeLinecap="round"
-              className={cn(
-                "transition-colors duration-500",
-                (scrolled || isDark) ? "text-brand-blue" : "text-white/80"
-              )}
+              className="transition-colors duration-500"
             />
           </svg>
         </div>
@@ -52,42 +55,67 @@ export default function Logo({ className, isDark = false, scrolled = false }: Lo
         <div className="flex flex-col">
           <h1 className={cn(
             "font-sans font-black text-2xl md:text-3xl leading-none tracking-tight transition-colors duration-500 uppercase",
-            (scrolled || isDark) ? "text-brand-blue" : "text-white"
+            isLogoDark ? "text-[#003B95]" : "text-white"
           )}>
             RINGBELT
           </h1>
           
+          {/* AGENTS Section */}
           <div className="flex items-center gap-2 mt-0.5">
             <div className={cn(
-              "h-[1.5px] grow transition-colors duration-500",
-              (scrolled || isDark) ? "bg-brand-red" : "bg-white/40"
+              "h-[2px] grow transition-colors duration-500 bg-[#ED3237]"
             )} />
             <span className={cn(
-              "text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] transition-colors duration-500",
-              (scrolled || isDark) ? "text-brand-red" : "text-white"
+              "text-[10px] md:text-[12px] font-black uppercase tracking-[0.4em] transition-colors duration-500 text-[#ED3237]"
             )}>
               AGENTS
             </span>
             <div className={cn(
-              "h-[1.5px] grow transition-colors duration-500",
-              (scrolled || isDark) ? "bg-brand-red" : "bg-white/40"
+              "h-[2px] grow transition-colors duration-500 bg-[#ED3237]"
+            )} />
+          </div>
+
+          {/* LIMITED Section */}
+          <div className="flex items-center gap-2 mt-0.5">
+            <div className={cn(
+              "h-[1px] grow transition-colors duration-500",
+              isLogoDark ? "bg-[#003B95]" : "bg-white/40"
+            )} />
+            <span className={cn(
+              "text-[8px] md:text-[10px] font-black uppercase tracking-[0.6em] transition-colors duration-500",
+              isLogoDark ? "text-[#003B95]" : "text-white"
+            )}>
+              LIMITED
+            </span>
+            <div className={cn(
+              "h-[1px] grow transition-colors duration-500",
+              isLogoDark ? "bg-[#003B95]" : "bg-white/40"
             )} />
           </div>
         </div>
       </div>
       
-      {/* Services Tagline (Optional/Conditional for Desktop) */}
+      {/* Enhanced Tagline with Icons */}
       <div className={cn(
-        "hidden lg:flex items-center gap-1.5 mt-1 text-[6px] uppercase tracking-[0.1em] font-bold transition-all duration-500 whitespace-nowrap",
-        (scrolled || isDark) ? "text-brand-blue/40" : "text-white/30"
+        "hidden lg:flex items-center gap-6 mt-3 transition-all duration-500",
+        isLogoDark ? "text-[#003B95]" : "text-white"
       )}>
-        <span>Tenant Management</span>
-        <span className="w-0.5 h-2 bg-current" />
-        <span>Rental Agency</span>
-        <span className="w-0.5 h-2 bg-current" />
-        <span>Real Estate Sales</span>
-        <span className="w-0.5 h-2 bg-current" />
-        <span>Property Management</span>
+        {[
+          { text: "Tenant Management", icon: Users },
+          { text: "Rental Agency", icon: Key },
+          { text: "Real Estate Sales", icon: Home },
+          { text: "Property Management", icon: Settings },
+        ].map((item, idx) => (
+          <div key={idx} className="flex flex-col items-center gap-1 group">
+            <div className={cn(
+              "w-6 h-6 rounded-full flex items-center justify-center transition-colors",
+              idx % 2 === 0 ? "bg-[#003B95] text-white" : "bg-[#ED3237] text-white"
+            )}>
+              <item.icon size={12} />
+            </div>
+            <span className="text-[6px] font-black uppercase tracking-wider">{item.text}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
