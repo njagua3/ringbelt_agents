@@ -45,6 +45,7 @@ export default function Admin() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [usingDemoMode, setUsingDemoMode] = useState(!isFirebaseConfigured);
   const [formData, setFormData] = useState({
     title: '',
@@ -271,14 +272,14 @@ export default function Admin() {
         const updatedProps = properties.map(p => p.id === id ? { ...p, available: !currentStatus } : p);
         setProperties(updatedProps);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProps));
-        showToast(`Property marked as ${!currentStatus ? 'Available' : 'Occupied'}`, 'info');
+        showToast(`Property marked as ${!currentStatus ? 'Vacant' : 'Occupied'}`, 'info');
         return;
       }
       await updateDoc(doc(db, 'properties', id), {
         available: !currentStatus,
         updatedAt: serverTimestamp(),
       });
-      showToast(`Property marked as ${!currentStatus ? 'Available' : 'Occupied'}`, 'info');
+      showToast(`Property marked as ${!currentStatus ? 'Vacant' : 'Occupied'}`, 'info');
     } catch (error) {
       console.error("Error toggling availability:", error);
       showToast('Failed to update status.', 'error');
@@ -292,6 +293,47 @@ export default function Admin() {
                            (adminCategory === 'Featured' ? prop.featured : prop.category === adminCategory);
     return matchesSearch && matchesCategory;
   });
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filteredAdminProperties.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredAdminProperties.map(p => p.id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!selectedIds.length) return;
+    
+    try {
+      setIsSaving(true);
+      if (!isFirebaseConfigured) {
+        const updatedProps = properties.filter(p => !selectedIds.includes(p.id));
+        setProperties(updatedProps);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProps));
+        showToast(`${selectedIds.length} Assets removed in demo mode`, 'success');
+      } else {
+        // In real Firebase, we do a batch or multiple deletes
+        // For simplicity here, we loop
+        for (const id of selectedIds) {
+          await deleteDoc(doc(db, 'properties', id));
+        }
+        showToast(`${selectedIds.length} Assets purged from cloud`, 'success');
+      }
+      setSelectedIds([]);
+    } catch (error) {
+      console.error("Bulk delete error:", error);
+      showToast('Error during bulk deletion', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const optimizeImage = (url: string) => {
     if (url.includes('unsplash.com')) {
@@ -415,7 +457,38 @@ export default function Admin() {
             </div>
           </div>
 
+          <AnimatePresence>
+            {selectedIds.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-brand-navy dark:bg-black p-6 rounded-[2rem] shadow-4xl border border-white/10 flex items-center gap-8 min-w-[400px]"
+              >
+                <div className="flex flex-col">
+                  <span className="text-brand-gold font-bold text-lg">{selectedIds.length} Assets Selected</span>
+                  <span className="text-white/40 text-[9px] uppercase tracking-widest">Bulk Management Actions</span>
+                </div>
+                <div className="flex gap-4 ml-auto">
+                  <button 
+                    onClick={() => setSelectedIds([])}
+                    className="px-6 py-3 rounded-xl border border-white/10 text-white/60 hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest"
+                  >
+                    Clear
+                  </button>
+                  <button 
+                    onClick={handleBulkDelete}
+                    className="px-6 py-3 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-all text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"
+                  >
+                    <Trash2 size={14} /> Bulk Purge
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <AnimatePresence mode="wait">
+
             {activeTab === 'dashboard' ? (
               <motion.div
                 key="dashboard"
@@ -424,13 +497,13 @@ export default function Admin() {
                 exit={{ opacity: 0, x: 20 }}
                 className="space-y-16"
               >
-                {/* Stats Summary */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-                  {[
-                    { label: 'Total Assets', value: properties.length, color: 'text-brand-blue dark:text-white' },
-                    { label: 'Available', value: properties.filter(p => p.available).length, color: 'text-green-600 dark:text-green-400' },
-                    { label: 'Occupied', value: properties.filter(p => !p.available).length, color: 'text-brand-gold' },
-                  ].map((stat, i) => (
+        {/* Stats Summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          {[
+            { label: 'Total Assets', value: properties.length, color: 'text-brand-blue dark:text-white' },
+            { label: 'Vacant', value: properties.filter(p => p.available).length, color: 'text-green-600 dark:text-green-400' },
+            { label: 'Occupied', value: properties.filter(p => !p.available).length, color: 'text-brand-gold' },
+          ].map((stat, i) => (
                     <div key={i} className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10">
                       <div className="text-brand-blue/60 dark:text-brand-gold/80 text-[10px] uppercase tracking-[0.2em] font-bold mb-4">{stat.label}</div>
                       <div className={`text-5xl font-serif font-bold ${stat.color}`}>{stat.value}</div>
@@ -517,6 +590,14 @@ export default function Admin() {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-white/5 border-b border-white/5">
+                          <th className="p-8 w-12">
+                            <input 
+                              type="checkbox" 
+                              className="w-5 h-5 rounded border-brand-gold/30 text-brand-gold focus:ring-brand-gold"
+                              checked={selectedIds.length > 0 && selectedIds.length === filteredAdminProperties.length}
+                              onChange={toggleSelectAll}
+                            />
+                          </th>
                           <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Asset</th>
                           <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Classification</th>
                           <th className="p-8 text-[10px] uppercase tracking-[0.2em] text-brand-blue/60 dark:text-brand-gold font-bold">Valuation</th>
@@ -527,10 +608,18 @@ export default function Admin() {
                       <tbody className="divide-y divide-white/5">
                         {loading ? (
                           <tr>
-                            <td colSpan={5} className="p-32 text-center text-slate-600 dark:text-slate-400 font-light italic">Synchronizing assets...</td>
+                            <td colSpan={6} className="p-32 text-center text-slate-600 dark:text-slate-400 font-light italic">Synchronizing assets...</td>
                           </tr>
                         ) : filteredAdminProperties.map((prop) => (
-                          <tr key={prop.id} className="hover:bg-white/5 transition-colors group">
+                          <tr key={prop.id} className={cn("hover:bg-white/5 transition-colors group", selectedIds.includes(prop.id) && "bg-brand-gold/5")}>
+                            <td className="p-8">
+                              <input 
+                                type="checkbox" 
+                                className="w-5 h-5 rounded border-brand-gold/30 text-brand-gold focus:ring-brand-gold"
+                                checked={selectedIds.includes(prop.id)}
+                                onChange={() => toggleSelect(prop.id)}
+                              />
+                            </td>
                             <td className="p-8">
                               <div className="flex items-center gap-6">
                                 <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg">
@@ -568,7 +657,7 @@ export default function Admin() {
                                     : "bg-red-500/10 text-red-500 border border-red-500/20"
                                 )}
                               >
-                                {prop.available ? 'Available' : 'Occupied'}
+                                {prop.available ? 'Vacant' : 'Occupied'}
                               </button>
                             </td>
                             <td className="p-8 text-right">
@@ -716,75 +805,94 @@ export default function Admin() {
                       </div>
                     </div>
 
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between ml-1">
-                        <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500 dark:text-brand-gold/60">Property Gallery (Unsplash URLs)</label>
-                        <button 
-                          type="button" 
-                          onClick={addImageField}
-                          className="text-[9px] font-bold uppercase tracking-widest text-brand-gold hover:text-brand-gold-light transition-colors flex items-center gap-2"
-                        >
-                          <Plus size={12} /> Add More Images
-                        </button>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        {formData.images.map((img, idx) => (
-                          <div key={idx} className="flex flex-col gap-3 group/item">
-                            <div className="flex gap-3">
-                              <div className="relative flex-grow">
-                                <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-gold" size={18} />
-                                <input
-                                  type="url"
-                                  required={idx === 0}
-                                  value={img}
-                                  onChange={(e) => updateImageField(idx, e.target.value)}
-                                  className="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50 dark:text-white placeholder:text-slate-400 text-sm"
-                                  placeholder={`Paste image URL or use upload button`}
-                                />
-                              </div>
-                              
-                              <label className="shrink-0 cursor-pointer">
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  className="hidden"
-                                  onChange={(e) => handleFileUpload(idx, e)}
-                                  disabled={isUploading !== null}
-                                />
-                                <div className={cn(
-                                  "p-4 bg-brand-gold/10 text-brand-gold rounded-2xl transition-all hover:bg-brand-gold hover:text-brand-blue flex items-center justify-center",
-                                  isUploading === idx && "animate-pulse"
-                                )}>
-                                  {isUploading === idx ? <Loader2 className="animate-spin" size={18} /> : <Upload size={18} />}
-                                </div>
-                              </label>
-
-                              {formData.images.length > 1 && (
-                                <button 
-                                  type="button" 
-                                  onClick={() => removeImageField(idx)}
-                                  className="p-4 text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors"
-                                >
-                                  <Trash2 size={18} />
-                                </button>
-                              )}
-                            </div>
-                            
-                            {img && (
-                              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-brand-gold/20 ml-1">
-                                <img src={img} alt="Preview" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                  <button onClick={() => updateImageField(idx, '')} className="text-white p-1 hover:text-red-400">
-                                    <X size={16} />
-                                  </button>
-                                </div>
-                              </div>
-                            )}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between ml-1">
+                          <div className="flex flex-col">
+                            <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500 dark:text-brand-gold/60">Property Gallery</label>
+                            <span className="text-[9px] text-slate-400 dark:text-slate-500 italic">The first image will be used as the primary cover.</span>
                           </div>
-                        ))}
+                          <button 
+                            type="button" 
+                            onClick={addImageField}
+                            className="bg-brand-gold/10 text-brand-gold px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-brand-gold hover:text-brand-blue transition-all flex items-center gap-2 shadow-sm"
+                          >
+                            <Plus size={12} /> Add More Images
+                          </button>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-4">
+                          {formData.images.map((img, idx) => (
+                            <div key={idx} className={cn(
+                              "flex flex-col p-4 rounded-2xl border transition-all group/item bg-slate-50/50 dark:bg-white/5",
+                              idx === 0 ? "border-brand-gold/40 ring-1 ring-brand-gold/20" : "border-slate-200 dark:border-white/10"
+                            )}>
+                              <div className="flex items-start gap-4">
+                                <div className="relative w-20 h-20 rounded-xl overflow-hidden shadow-md shrink-0 bg-white dark:bg-black/20 border border-brand-gold/10">
+                                  {img ? (
+                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-700">
+                                      <Camera size={24} />
+                                    </div>
+                                  )}
+                                  {isUploading === idx && (
+                                    <div className="absolute inset-0 bg-brand-blue/60 backdrop-blur-sm flex items-center justify-center">
+                                      <Loader2 size={20} className="text-white animate-spin" />
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className="flex-grow space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                                      {idx === 0 ? 'Primary Asset Photo' : `Gallery Image #${idx + 1}`}
+                                    </span>
+                                    {formData.images.length > 1 && (
+                                      <button 
+                                        type="button" 
+                                        onClick={() => removeImageField(idx)}
+                                        className="text-red-500 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-all opacity-0 group-hover/item:opacity-100"
+                                      >
+                                        <Trash2 size={16} />
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  <div className="flex gap-3">
+                                    <div className="relative flex-grow">
+                                      <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-gold/50" size={14} />
+                                      <input
+                                        type="url"
+                                        required={idx === 0}
+                                        value={img}
+                                        onChange={(e) => updateImageField(idx, e.target.value)}
+                                        className="w-full pl-10 pr-4 py-3 bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-gold/30 dark:text-white placeholder:text-slate-400 text-[11px]"
+                                        placeholder="Paste Image URL"
+                                      />
+                                    </div>
+                                    
+                                    <label className="shrink-0 cursor-pointer">
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handleFileUpload(idx, e)}
+                                        disabled={isUploading !== null}
+                                      />
+                                      <div className={cn(
+                                        "px-4 py-3 bg-brand-gold/10 text-brand-gold rounded-xl transition-all hover:bg-brand-gold hover:text-brand-blue flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest",
+                                        isUploading === idx && "opacity-50"
+                                      )}>
+                                        <Upload size={14} /> {isUploading === idx ? 'Processing' : 'Upload'}
+                                      </div>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
 
                     <div className="grid grid-cols-3 gap-6">
                       <div className="space-y-3">
@@ -832,7 +940,7 @@ export default function Admin() {
                           )} />
                         </div>
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest cursor-pointer">
-                          Asset is currently Available
+                          Asset is currently Vacant
                         </label>
                       </div>
 

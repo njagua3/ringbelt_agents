@@ -75,6 +75,15 @@ const PropertyCard = memo(({ prop }: { prop: Property }) => (
       
       {/* Status Badges */}
       <div className="absolute top-10 left-10 flex flex-col gap-3">
+        {prop.available ? (
+          <span className="bg-green-500/90 backdrop-blur-md text-white px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Vacant
+          </span>
+        ) : (
+          <span className="bg-red-500/90 backdrop-blur-md text-white px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2">
+            Occupied
+          </span>
+        )}
         <span className="bg-white/90 dark:bg-brand-navy/90 backdrop-blur-md text-brand-blue dark:text-white px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl">
           {prop.category}
         </span>
@@ -96,12 +105,6 @@ const PropertyCard = memo(({ prop }: { prop: Property }) => (
           <span className="text-white text-3xl font-serif font-bold">{prop.price}</span>
           <span className="text-white/60 text-[10px] block uppercase tracking-widest mt-1">Monthly Valuation</span>
         </div>
-        
-        {!prop.available && (
-          <div className="bg-red-500/20 backdrop-blur-xl border border-red-500/40 px-6 py-3 rounded-2xl">
-            <span className="text-red-500 text-[10px] font-bold uppercase tracking-widest">Occupied</span>
-          </div>
-        )}
       </div>
 
       {/* Hover Overlay */}
