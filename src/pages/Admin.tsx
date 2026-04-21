@@ -11,9 +11,10 @@ import { useToast } from '@/components/Toast';
 import { 
   db, collection, onSnapshot, query, orderBy, 
   addDoc, updateDoc, deleteDoc, doc, serverTimestamp,
-  isFirebaseConfigured
+  isFirebaseConfigured, storage, ref, uploadBytes, getDownloadURL
 } from '@/lib/firebase';
 import { categories, sampleProperties } from '@/constants/initialData';
+import { Upload, Camera, Loader2 } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'ringbelt_properties_v2';
 
@@ -42,6 +43,7 @@ export default function Admin() {
   const [adminSearch, setAdminSearch] = useState('');
   const [adminCategory, setAdminCategory] = useState('All');
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [usingDemoMode, setUsingDemoMode] = useState(!isFirebaseConfigured);
   const [formData, setFormData] = useState({
@@ -204,6 +206,44 @@ export default function Admin() {
     const newImages = [...formData.images];
     newImages[index] = value;
     setFormData({ ...formData, images: newImages });
+  };
+
+  const handleFileUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (limit to 5MB for demo/sanity)
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File too large (Max 5MB)', 'error');
+      return;
+    }
+
+    setIsUploading(index);
+    try {
+      if (!isFirebaseConfigured) {
+        // Demo Mode: Convert to Base64 (LocalStorage storage)
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          updateImageField(index, base64String);
+          showToast('Image cached locally (Demo Mode)', 'success');
+          setIsUploading(null);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Real Mode: Upload to Firebase Storage
+        const fileRef = ref(storage, `properties/${Date.now()}_${file.name}`);
+        const snapshot = await uploadBytes(fileRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        updateImageField(index, downloadURL);
+        showToast('Image uploaded successfully', 'success');
+        setIsUploading(null);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast('Upload failed', 'error');
+      setIsUploading(null);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -408,7 +448,7 @@ export default function Admin() {
                       </div>
                       <div className="flex gap-4">
                         <div className="w-8 h-8 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold shrink-0">2</div>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm">Enter the property details (Title, Price, Location). For images, use URLs from <span className="italic">Unsplash</span> or your preferred host.</p>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">Enter the property details. For images, you can either **paste a URL** or **upload directly** using the cloud icon.</p>
                       </div>
                       <div className="flex gap-4">
                         <div className="w-8 h-8 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold shrink-0">3</div>
@@ -690,26 +730,56 @@ export default function Admin() {
                       
                       <div className="space-y-3">
                         {formData.images.map((img, idx) => (
-                          <div key={idx} className="flex gap-3">
-                            <div className="relative flex-grow">
-                              <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-gold" size={18} />
-                              <input
-                                type="url"
-                                required={idx === 0}
-                                value={img}
-                                onChange={(e) => updateImageField(idx, e.target.value)}
-                                className="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50 dark:text-white placeholder:text-slate-400"
-                                placeholder={`Image URL ${idx + 1}`}
-                              />
+                          <div key={idx} className="flex flex-col gap-3 group/item">
+                            <div className="flex gap-3">
+                              <div className="relative flex-grow">
+                                <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-gold" size={18} />
+                                <input
+                                  type="url"
+                                  required={idx === 0}
+                                  value={img}
+                                  onChange={(e) => updateImageField(idx, e.target.value)}
+                                  className="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50 dark:text-white placeholder:text-slate-400 text-sm"
+                                  placeholder={`Paste image URL or use upload button`}
+                                />
+                              </div>
+                              
+                              <label className="shrink-0 cursor-pointer">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => handleFileUpload(idx, e)}
+                                  disabled={isUploading !== null}
+                                />
+                                <div className={cn(
+                                  "p-4 bg-brand-gold/10 text-brand-gold rounded-2xl transition-all hover:bg-brand-gold hover:text-brand-blue flex items-center justify-center",
+                                  isUploading === idx && "animate-pulse"
+                                )}>
+                                  {isUploading === idx ? <Loader2 className="animate-spin" size={18} /> : <Upload size={18} />}
+                                </div>
+                              </label>
+
+                              {formData.images.length > 1 && (
+                                <button 
+                                  type="button" 
+                                  onClick={() => removeImageField(idx)}
+                                  className="p-4 text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              )}
                             </div>
-                            {formData.images.length > 1 && (
-                              <button 
-                                type="button" 
-                                onClick={() => removeImageField(idx)}
-                                className="p-4 text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors"
-                              >
-                                <Trash2 size={18} />
-                              </button>
+                            
+                            {img && (
+                              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-brand-gold/20 ml-1">
+                                <img src={img} alt="Preview" className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                  <button onClick={() => updateImageField(idx, '')} className="text-white p-1 hover:text-red-400">
+                                    <X size={16} />
+                                  </button>
+                                </div>
+                              </div>
                             )}
                           </div>
                         ))}

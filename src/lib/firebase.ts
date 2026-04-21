@@ -14,6 +14,7 @@ import {
   serverTimestamp,
   Timestamp
 } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Note: In a real app, these would come from firebase-applet-config.json
 // For this environment, we'll use placeholders that the user can fill or 
@@ -35,6 +36,7 @@ const isFirebaseConfigured = import.meta.env.VITE_FIREBASE_API_KEY && import.met
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
 
 export { 
@@ -51,5 +53,8 @@ export {
   orderBy,
   limit,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  ref,
+  uploadBytes,
+  getDownloadURL
 };
