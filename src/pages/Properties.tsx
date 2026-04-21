@@ -1,5 +1,5 @@
 import { useState, useEffect, memo } from 'react';
-import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase, Loader2 } from 'lucide-react';
+import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase, Loader2, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -33,6 +33,7 @@ interface Property {
   location: string;
   price: string;
   image: string;
+  images?: string[];
   category: string;
   available: boolean;
   featured?: boolean;
@@ -75,6 +76,11 @@ const PropertyCard = memo(({ prop }: { prop: Property }) => (
         {(prop.featured || prop.id.startsWith('feat-')) && (
           <span className="bg-brand-gold text-brand-blue px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2">
             <Sparkles size={12} /> Featured
+          </span>
+        )}
+        {prop.images && prop.images.length > 1 && (
+          <span className="bg-brand-blue/80 dark:bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-2 w-fit">
+            <ImageIcon size={10} /> +{prop.images.length - 1} Images
           </span>
         )}
       </div>

@@ -19,6 +19,7 @@ interface Property {
   location: string;
   price: string;
   image: string;
+  images?: string[];
   category: string;
   available: boolean;
   featured?: boolean;
@@ -43,6 +44,7 @@ export default function Admin() {
     location: '',
     price: '',
     image: '',
+    images: [''],
     category: categories[0],
     available: true,
     featured: false,
@@ -61,10 +63,14 @@ export default function Admin() {
 
     const q = query(collection(db, 'properties'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const props = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Property[];
+      const props = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          images: data.images || [data.image || '']
+        };
+      }) as Property[];
       setProperties(props);
       setLoading(false);
     });
@@ -80,18 +86,29 @@ export default function Admin() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    
+    // Ensure the main 'image' field is the first image in the array
+    const finalImages = formData.images.filter(img => img.trim() !== '');
+    const mainImage = finalImages[0] || formData.image || '';
+    
     try {
+      const payload = {
+        ...formData,
+        image: mainImage,
+        images: finalImages,
+      };
+
       if (editingId) {
         const propRef = doc(db, 'properties', editingId);
         await updateDoc(propRef, {
-          ...formData,
+          ...payload,
           updatedAt: serverTimestamp(),
         });
         showToast('Property updated successfully', 'success');
         setEditingId(null);
       } else {
         await addDoc(collection(db, 'properties'), {
-          ...formData,
+          ...payload,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
@@ -103,6 +120,7 @@ export default function Admin() {
         location: '',
         price: '',
         image: '',
+        images: [''],
         category: categories[0],
         available: true,
         featured: false,
@@ -125,6 +143,7 @@ export default function Admin() {
       location: prop.location,
       price: prop.price,
       image: prop.image,
+      images: prop.images && prop.images.length > 0 ? prop.images : [prop.image],
       category: prop.category,
       available: prop.available,
       featured: prop.featured || false,
@@ -133,6 +152,21 @@ export default function Admin() {
       size: prop.size || '',
     });
     setIsAdding(true);
+  };
+
+  const addImageField = () => {
+    setFormData({ ...formData, images: [...formData.images, ''] });
+  };
+
+  const removeImageField = (index: number) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    setFormData({ ...formData, images: newImages.length > 0 ? newImages : [''] });
+  };
+
+  const updateImageField = (index: number, value: string) => {
+    const newImages = [...formData.images];
+    newImages[index] = value;
+    setFormData({ ...formData, images: newImages });
   };
 
   const handleDelete = async (id: string) => {
@@ -298,17 +332,32 @@ export default function Admin() {
                   ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10 h-[400px] flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-brand-blue/30 dark:text-white/20 uppercase tracking-[0.4em] font-bold text-xs mb-4">Analytics</div>
-                      <p className="text-slate-500 italic">Portfolio statistics and metrics visualization</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2 glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10">
+                    <h3 className="text-2xl font-serif font-bold text-brand-blue dark:text-white mb-6">How to List New Properties</h3>
+                    <div className="space-y-6">
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold shrink-0">1</div>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">Click the <span className="font-bold text-brand-blue dark:text-brand-gold">"New Asset"</span> button at the top right of this page.</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold shrink-0">2</div>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">Enter the property details (Title, Price, Location). For images, use URLs from <span className="italic">Unsplash</span> or your preferred host.</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold shrink-0">3</div>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">You can now add <span className="font-bold">multiple images</span> by clicking "Add More Images" in the gallery section.</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold shrink-0">4</div>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">Click <span className="font-bold text-brand-blue dark:text-brand-gold">"Authorize Listing"</span> to save and publish the property to the live site.</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10 h-[400px] flex items-center justify-center">
+                  <div className="glass dark:glass-dark p-10 rounded-[2.5rem] shadow-xl border border-white/10 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="text-brand-blue/30 dark:text-white/20 uppercase tracking-[0.4em] font-bold text-xs mb-4">Recent Activity</div>
-                      <p className="text-slate-500 italic">Recent listing updates and management logs</p>
+                      <div className="text-brand-blue/30 dark:text-white/20 uppercase tracking-[0.4em] font-bold text-xs mb-4">Quick Stats</div>
+                      <p className="text-slate-500 italic">Portfolio health metrics</p>
                     </div>
                   </div>
                 </div>
@@ -561,18 +610,43 @@ export default function Admin() {
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500 dark:text-brand-gold/60 ml-1">Visual Asset URL (Unsplash preferred)</label>
-                      <div className="relative">
-                        <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-gold" size={18} />
-                        <input
-                          type="url"
-                          required
-                          value={formData.image}
-                          onChange={(e) => setFormData({...formData, image: e.target.value})}
-                          className="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50 dark:text-white placeholder:text-slate-400"
-                          placeholder="https://images.unsplash.com/..."
-                        />
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between ml-1">
+                        <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500 dark:text-brand-gold/60">Property Gallery (Unsplash URLs)</label>
+                        <button 
+                          type="button" 
+                          onClick={addImageField}
+                          className="text-[9px] font-bold uppercase tracking-widest text-brand-gold hover:text-brand-gold-light transition-colors flex items-center gap-2"
+                        >
+                          <Plus size={12} /> Add More Images
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {formData.images.map((img, idx) => (
+                          <div key={idx} className="flex gap-3">
+                            <div className="relative flex-grow">
+                              <ImageIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-gold" size={18} />
+                              <input
+                                type="url"
+                                required={idx === 0}
+                                value={img}
+                                onChange={(e) => updateImageField(idx, e.target.value)}
+                                className="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-gold/50 dark:text-white placeholder:text-slate-400"
+                                placeholder={`Image URL ${idx + 1}`}
+                              />
+                            </div>
+                            {formData.images.length > 1 && (
+                              <button 
+                                type="button" 
+                                onClick={() => removeImageField(idx)}
+                                className="p-4 text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
 
