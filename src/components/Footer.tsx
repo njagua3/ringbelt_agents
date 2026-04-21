@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Facebook, Music, Twitter, Mail, Phone, MapPin, Building2 } from 'lucide-react';
 
+import Logo from './Logo';
+
 export default function Footer() {
   const location = useLocation();
   const isAdminPage = location.pathname === '/admin';
@@ -21,14 +23,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
         {/* Brand Section */}
         <div className="space-y-8">
-          <Link to="/" className="flex items-center gap-4 group">
-            <div className="w-12 h-12 bg-brand-red rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-500">
-              <Building2 className="text-white w-7 h-7" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-serif font-bold text-2xl leading-none tracking-tighter">Ringbelt</span>
-              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-red">Agents Limited</span>
-            </div>
+          <Link to="/" className="group inline-block">
+            <Logo isDark={false} scrolled={false} />
           </Link>
           <p className="text-white/50 text-lg font-light leading-relaxed">
             "Honesty, integrity and Professionalism are our pillars"
