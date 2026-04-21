@@ -2,16 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Edit2, Trash2, Check, X, Image as ImageIcon, 
-  LayoutDashboard, Building2, LogOut, Search, Filter, MapPin 
+  LayoutDashboard, Building2, LogOut, Search, Filter, MapPin,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/Toast';
 import { 
   db, collection, onSnapshot, query, orderBy, 
-  addDoc, updateDoc, deleteDoc, doc, serverTimestamp 
+  addDoc, updateDoc, deleteDoc, doc, serverTimestamp,
+  isFirebaseConfigured
 } from '@/lib/firebase';
 import { categories, sampleProperties } from '@/constants/initialData';
+
+const LOCAL_STORAGE_KEY = 'ringbelt_properties_v2';
 
 interface Property {
   id: string;
@@ -39,6 +43,7 @@ export default function Admin() {
   const [adminCategory, setAdminCategory] = useState('All');
   const [isSaving, setIsSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [usingDemoMode, setUsingDemoMode] = useState(!isFirebaseConfigured);
   const [formData, setFormData] = useState({
     title: '',
     location: '',
@@ -58,6 +63,18 @@ export default function Admin() {
     const isAdmin = localStorage.getItem('isAdmin');
     if (!isAdmin) {
       navigate('/login');
+      return;
+    }
+
+    if (!isFirebaseConfigured) {
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (stored) {
+        setProperties(JSON.parse(stored));
+      } else {
+        setProperties(sampleProperties.map((p, i) => ({ id: `sample-${i}`, ...p, images: [p.image] })) as Property[]);
+      }
+      setLoading(false);
+      setUsingDemoMode(true);
       return;
     }
 
@@ -98,22 +115,42 @@ export default function Admin() {
         images: finalImages,
       };
 
-      if (editingId) {
-        const propRef = doc(db, 'properties', editingId);
-        await updateDoc(propRef, {
-          ...payload,
-          updatedAt: serverTimestamp(),
-        });
-        showToast('Property updated successfully', 'success');
+      if (!isFirebaseConfigured) {
+        // Mock save logic using localStorage
+        let updatedProps: Property[];
+        if (editingId) {
+          updatedProps = properties.map(p => p.id === editingId ? { ...p, ...payload } : p);
+          showToast('Property updated in demo mode', 'success');
+        } else {
+          const newProp: Property = {
+            id: Date.now().toString(),
+            ...payload
+          };
+          updatedProps = [newProp, ...properties];
+          showToast('New property listed in demo mode', 'success');
+        }
+        setProperties(updatedProps);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProps));
+        setIsAdding(false);
         setEditingId(null);
       } else {
-        await addDoc(collection(db, 'properties'), {
-          ...payload,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-        showToast('New property added successfully', 'success');
-        setIsAdding(false);
+        if (editingId) {
+          const propRef = doc(db, 'properties', editingId);
+          await updateDoc(propRef, {
+            ...payload,
+            updatedAt: serverTimestamp(),
+          });
+          showToast('Property updated successfully', 'success');
+          setEditingId(null);
+        } else {
+          await addDoc(collection(db, 'properties'), {
+            ...payload,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+          showToast('New property added successfully', 'success');
+          setIsAdding(false);
+        }
       }
       setFormData({
         title: '',
@@ -171,6 +208,14 @@ export default function Admin() {
 
   const handleDelete = async (id: string) => {
     try {
+      if (!isFirebaseConfigured) {
+        const updatedProps = properties.filter(p => p.id !== id);
+        setProperties(updatedProps);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProps));
+        showToast('Property removed in demo mode', 'success');
+        setConfirmDelete(null);
+        return;
+      }
       await deleteDoc(doc(db, 'properties', id));
       showToast('Property deleted successfully', 'success');
       setConfirmDelete(null);
@@ -182,6 +227,13 @@ export default function Admin() {
 
   const toggleAvailability = async (id: string, currentStatus: boolean) => {
     try {
+      if (!isFirebaseConfigured) {
+        const updatedProps = properties.map(p => p.id === id ? { ...p, available: !currentStatus } : p);
+        setProperties(updatedProps);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProps));
+        showToast(`Property marked as ${!currentStatus ? 'Available' : 'Occupied'}`, 'info');
+        return;
+      }
       await updateDoc(doc(db, 'properties', id), {
         available: !currentStatus,
         updatedAt: serverTimestamp(),
@@ -284,6 +336,20 @@ export default function Admin() {
       {/* Main Content */}
       <main className="flex-grow lg:ml-72 p-8 md:p-12 pt-16">
         <div className="max-w-7xl mx-auto">
+          {usingDemoMode && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 p-6 bg-amber-500/10 border border-amber-500/20 rounded-3xl flex items-center gap-4 text-amber-600 dark:text-amber-400"
+            >
+              <AlertTriangle className="shrink-0" size={24} />
+              <div className="text-sm">
+                <span className="font-bold block uppercase tracking-widest text-[10px] mb-1">Infrastructure Notice: Demo Mode Active</span>
+                <p className="font-light">Cloud data storage is currently unavailable due to backend permissions. Properties you add will be saved to your **browser's local storage** only. To persist data globally, please configure your Firebase keys in the Settings menu.</p>
+              </div>
+            </motion.div>
+          )}
+
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-8">
             <div>
               <h1 className="text-5xl font-serif font-bold text-brand-blue dark:text-white mb-4 tracking-tighter">

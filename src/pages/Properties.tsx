@@ -1,11 +1,16 @@
 import { useState, useEffect, memo } from 'react';
-import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Search, Filter, MapPin, Building2, Bed, Bath, Maximize, ArrowRight, Sparkles, Home, Building, GraduationCap, Briefcase, Loader2, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/Toast';
-import { db, collection, onSnapshot, query, orderBy, limit } from '@/lib/firebase';
+import { 
+  db, collection, onSnapshot, query, orderBy, limit,
+  isFirebaseConfigured
+} from '@/lib/firebase';
 import { sampleProperties } from '@/constants/initialData';
+
+const LOCAL_STORAGE_KEY = 'ringbelt_properties_v2';
 
 const categories = [
   'All',
@@ -146,8 +151,23 @@ export default function Properties() {
   );
   const [loading, setLoading] = useState(true);
   const [displayLimit, setDisplayLimit] = useState(12);
+  const [usingDemoMode, setUsingDemoMode] = useState(!isFirebaseConfigured);
+  const [dbStatus, setDbStatus] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isFirebaseConfigured) {
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (stored) {
+        setProperties(JSON.parse(stored));
+      } else {
+        setProperties(sampleProperties.map((p, i) => ({ id: `sample-${i}`, ...p, images: [p.image] })) as Property[]);
+      }
+      setLoading(false);
+      setUsingDemoMode(true);
+      setDbStatus('DEMO MODE: Using Local Storage (Disconnected from Cloud)');
+      return;
+    }
+
     const q = query(collection(db, 'properties'), orderBy('createdAt', 'desc'), limit(50));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const dbProps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Property[];
@@ -263,6 +283,11 @@ export default function Properties() {
             <h2 className="font-serif text-5xl md:text-7xl font-bold text-brand-blue dark:text-white leading-tight">
               Refine Your <br /> <span className="italic font-normal text-brand-gold">Search</span>
             </h2>
+            {dbStatus && (
+              <div className="mt-4 flex items-center gap-2 text-amber-500 font-bold uppercase tracking-widest text-[9px]">
+                <AlertCircle size={14} /> {dbStatus}
+              </div>
+            )}
           </div>
           
           <div className="w-full lg:w-1/2 space-y-8">
